@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import useStore from '../../app/chatStore';
 
 interface GifModalProps {
   currentConversation: string;
@@ -21,6 +22,7 @@ interface GifModalProps {
 
 const GifModal: React.FC<GifModalProps> = ({ currentConversation, user, onSend }) => {
   const { isModalOpen, selectedGifUrl , toggleGifModal } = useGifStore();
+  const {addMessage} = useStore(); 
   const [message, setMessage] = useState("");
 useEffect(()=>{
   console.log(isModalOpen);
@@ -37,7 +39,13 @@ useEffect(()=>{
   }, [toggleGifModal]);
 
   const handleSendMessage = () => {
-    
+    addMessage({
+    GIFlink:selectedGifUrl,
+    text:message,
+    sender:"employee",
+    timestamp:"14:25",
+    isNote:false
+    })
     toggleGifModal(false, null);
   };
 

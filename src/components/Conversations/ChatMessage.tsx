@@ -1,15 +1,16 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Card, CardContent } from '../ui/card';
-import { Camera, Paperclip, FileText, Bot, TriangleAlert } from 'lucide-react';
+import { Bot, TriangleAlert } from 'lucide-react';
 
 interface ChatMessageProps {
-  text: string;
-  sender: 'user' | 'bot' | 'employee';
+  text?: string;
+  GIFlink?: string;
+  ImageLink?: string; 
+  sender: 'user' | 'employee' | 'bot';
   timestamp: string;
-  isNote: boolean|undefined;
+  isNote?: boolean;
   avatarSrc: string;
-  attachmentType?: 'image' | 'file' | 'document';
   dateSeparator?: string;
 }
 
@@ -23,11 +24,12 @@ const DateSeparator: React.FC<{ date: string }> = ({ date }) => (
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
   text,
+  GIFlink,
+  ImageLink,
   sender,
   timestamp,
   isNote,
   avatarSrc,
-  attachmentType,
   dateSeparator
 }) => {
   const isUser = sender === 'user';
@@ -39,18 +41,58 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     return 'bg-gray-100';
   };
 
-  const getAttachmentIcon = () => {
-    switch (attachmentType) {
-      case 'image': return <Camera className="w-4 h-4 text-gray-500" />;
-      case 'file': return <Paperclip className="w-4 h-4 text-gray-500" />;
-      case 'document': return <FileText className="w-4 h-4 text-gray-500" />;
-      default: return null;
+  const renderContent = () => {
+    if (GIFlink) {
+      return (
+        <div className="relative">
+          <img 
+            src={GIFlink}
+            alt="GIF message"
+            className="w-full h-auto rounded-md max-h-64 object-contain"
+            onError={(e) => {
+              console.error('Failed to load GIF');
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {text && (
+            <p className={`text-sm mt-2 ${isNote ? 'font-medium' : ''}`}>
+              {text}
+            </p>
+          )}
+        </div>
+      );
     }
+  
+    if (ImageLink) {
+      return (
+        <div className="relative">
+          <img 
+            src={ImageLink} 
+            alt="Image"
+            className="w-full h-auto rounded-md max-h-64 object-cover"
+          />
+          {text && (
+            <p className={`text-sm mt-2 ${isNote ? 'font-medium' : ''}`}>
+              {text}
+            </p>
+          )}
+        </div>
+      );
+    }
+  
+    if (text) {
+      return (
+        <p className={`text-sm ${isNote ? 'font-medium' : ''}`}>{text}</p>
+      );
+    }
+  
+    return null;
   };
 
   return (
     <>
       {dateSeparator && <DateSeparator date={dateSeparator} />}
+
       <div className={`flex items-start ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
         {!isUser && (
           <Avatar className="h-8 w-8 mr-2">
@@ -59,29 +101,30 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 <Bot size={20} />
               </div>
             ) : (
-                <div className={`${isNote?'hidden':''} h-full w-full flex items-center justify-center bg-gray-200  rounded-full`}>
+              <div className={`${isNote ? 'hidden' : ''} h-full w-full flex items-center justify-center bg-gray-200 rounded-full`}>
                 {sender[0].toUpperCase()}
               </div>
             )}
           </Avatar>
         )}
+
         <Card className={`max-w-[80%] ${getBackgroundColor()}`}>
           <CardContent className="p-3">
             <div className="flex items-start">
-              {isNote && <TriangleAlert size={16} className="text-yellow-500 mr-2 mt-1 flex-shrink-0" />}
-              <p className={`text-sm ${isNote ? 'font-medium' : ''}`}>{text}</p>
+              {isNote && (
+                <TriangleAlert 
+                  size={16} 
+                  className="text-yellow-500 mr-2 mt-1 flex-shrink-0" 
+                />
+              )}
+              {renderContent()}
             </div>
             <div className="flex items-center justify-between mt-2">
               <span className="text-xs text-gray-500">{timestamp}</span>
-              {attachmentType && (
-                <div className="flex items-center">
-                  {getAttachmentIcon()}
-                  <span className="text-xs text-gray-500 ml-1">Attachment</span>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
+
         {isUser && (
           <Avatar className="h-8 w-8 ml-2">
             <AvatarImage src={avatarSrc} alt="You" />

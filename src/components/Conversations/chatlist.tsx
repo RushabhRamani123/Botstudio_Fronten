@@ -73,12 +73,10 @@ const ChatList: React.FC<Chat>= () => {
                     {chat.name}
                   </h3>
                   <span className={`text-xs ${chat.unread ? 'text-blue-600 font-semibold' : 'text-gray-500'} ml-2 flex-shrink-0`}>
-                    {chat.time}
+                    {""}
                   </span>
                 </div>
-                {chat.company && (
-                  <p className="text-xs text-gray-500 truncate">{chat.company}</p>
-                )}
+                {""}
               </div>
             </div>
             <p className={`text-sm truncate ${chat.unread ? 'text-gray-900' : 'text-gray-600'}`}>

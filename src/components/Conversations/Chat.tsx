@@ -194,11 +194,16 @@ const Chat: React.FC = () => {
   return (
     <div className="flex w-full h-screen">
       <div className="flex-1 flex flex-col border-r">
+        
+        {/* CHAT HEADER */}
         <ChatHeader
           userName={selectedChat.name}
           avatarSrc={`/api/placeholder/32/32`}
           openDrawer={openDrawer}
         />
+
+
+      {/* CHAT MESSAGES */}
         <div className="flex-1 overflow-hidden">
           <Scrollbars
             ref={scrollbarsRef}
@@ -217,6 +222,8 @@ const Chat: React.FC = () => {
                 >
                   <ChatMessage
                     text={entry.text}
+                    GIFlink={entry.GIFlink}
+                    ImageLink={entry.ImageLink}
                     sender={entry.sender}
                     timestamp={entry.timestamp}
                     isNote={entry.isNote}
@@ -228,6 +235,10 @@ const Chat: React.FC = () => {
             </div>
           </Scrollbars>
         </div>
+
+
+
+        {/* CHAT FOOTER */}
         <div className="bg-white p-4 border-t-2 border-blue-300 ">
           <ChatInput Emoji={Emoji} setEmoji={setEmoji} Note={isNoteActive} handleSendMessage={handleSendMessage} />
           <ChatActions 
@@ -242,8 +253,12 @@ const Chat: React.FC = () => {
           </div>
            
         </div>
+
+
       </div>
+      
       <UserProfile isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+      {/* This is the modal thing  */}
       <GifModal /> 
     </div>
   );

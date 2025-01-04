@@ -7,7 +7,7 @@ import useNavbarStore from "../app/navbarStore";
 import Messages from "./Conversations/Messages";
 import { Logo } from "./Logo";
 import BotDetailView from "./Bot/Botview";
-import CreateAndEditFlow from "./Bot/Flow/CreateandEditFlow";
+import CreateAndEditFlow from "./Bot/Flow/CreateAndEditFlow";
 import BotWithStyles from "./Bot/Bot";
 const Home = () => <div className="p-6">Home Dashboard</div>;
 function Sidebar() {
@@ -146,6 +146,7 @@ function Navbar() {
             <Route path="/messages" element={<Messages />} />
             <Route path="/bot" element={<BotWithStyles />} />
             <Route path='/bot/:id' element={<BotDetailView /> }/>
+            <Route path='/bot/flow' element={<CreateAndEditFlow /> }/>
           </Routes>
         </main>
       </ScrollArea>
