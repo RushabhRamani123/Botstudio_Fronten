@@ -11,8 +11,6 @@ export default function EmojiPicker({onSelectEmoji}) {
   const buttonRef = useRef(null);
 
   const handleSelectEmoji = (emoji) => {
-    // setSelectEmoji([...selectEmoji, emoji.native]); 
-    // console.log(selectEmoji);
     onSelectEmoji(emoji.native); 
   }
 
