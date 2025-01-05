@@ -9,6 +9,9 @@ import { Logo } from "./Logo";
 import BotDetailView from "./Bot/Botview";
 import CreateAndEditFlow from "./Bot/Flow/CreateAndEditFlow";
 import BotWithStyles from "./Bot/Bot";
+import TemplateBuilder from "./Template/TemplateBuilder";
+import TemplateManagement from "./Template";
+import ContactEmailPage from "./Email/Email";
 const Home = () => <div className="p-6">Home Dashboard</div>;
 function Sidebar() {
   const navRef = useRef(null);
@@ -147,6 +150,9 @@ function Navbar() {
             <Route path="/bot" element={<BotWithStyles />} />
             <Route path='/bot/:id' element={<BotDetailView /> }/>
             <Route path='/bot/flow' element={<CreateAndEditFlow /> }/>
+            <Route path="/template/builder" element={<TemplateBuilder />}/>
+            <Route path="/template" element={<TemplateManagement />}/>
+            <Route path="/mail" element={<ContactEmailPage />}/>
           </Routes>
         </main>
       </ScrollArea>

@@ -38,7 +38,6 @@ const CreateAndEditFlow: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Compact Header */}
       <Card className="shadow-sm rounded-none border-b border-gray-200">
         <CardContent className="py-2 px-4">
           <div className="flex justify-between items-center">
@@ -78,7 +77,6 @@ const CreateAndEditFlow: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Content area with sidebar and editor */}
       <div className="flex flex-1 overflow-hidden">
         <Suspense fallback={<SidebarSkeleton />}>
           <Sidebar />

@@ -22,13 +22,13 @@ const Inbox: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
   const conversations: ConversationItem[] = [
-    { icon: User, label: "You", count: 5 },
-    { icon: AtSign, label: "Mentions", count: 2 },
-    { icon: InboxIcon, label: "All", count: 234 },
-    { icon: Users, label: "Unassigned", count: 20 },
-    { icon: Star, label: "Sales", count: 142 },
-    { icon: HeadphonesIcon, label: "Support", count: 4 },
-    { icon: Globe, label: "Global Sales", count: 23 },
+    { icon:User,label:"You",count:5},
+    { icon:AtSign,label:"Mentions",count:2},
+    { icon:InboxIcon,label:"All",count:234},
+    { icon:Users,label:"Unassigned",count:20},
+    { icon:Star,label:"Sales",count:142},
+    { icon:HeadphonesIcon,label:"Support",count:4},
+    { icon:Globe,label:"Global Sales",count:23},
   ];
 
   const handleTabClick = (label: string) => {
@@ -41,7 +41,6 @@ const Inbox: React.FC = () => {
         {/* header */}
         <div className="flex items-center justify-between px-4 py-4 mb-4">
           <h1 className="text-xl font-medium text-[#1c1c1c]">Inbox</h1>
-          <ChevronDown className="w-5 h-5 text-gray-500" />
         </div>
         {/* conversations */}
         <div className="flex-grow flex flex-col overflow-y-auto px-4 gap-[15px]">
@@ -73,17 +72,6 @@ const Inbox: React.FC = () => {
               </li>
             ))}
           </ul>
-          {/* Show hidden */}
-          <div className="flex items-center justify-between py-2 text-[#969696] text-sm mb-4">
-            <span>Show 20 hidden</span>
-            <Settings className="w-4 h-4" />
-          </div>
-          {/* Additional sections */}
-          <div className="space-y-3 flex flex-col gap-[15px] text-sm text-gray-500">
-            <p>ASSIGNMENT RULES</p>
-            <p>REPORTS</p>
-            <p>START GUIDE</p>
-          </div>
         </div>
       </div>
       {selectedTab && (
@@ -94,5 +82,4 @@ const Inbox: React.FC = () => {
     </div>
   );
 };
-
 export default Inbox;
