@@ -1,51 +1,54 @@
-import React from 'react';
-import { Button } from '../ui/button';
-import { Paperclip, Image,MessageSquare, NotebookPen } from 'lucide-react';
-import EmojiPicker from './EmojiPicker';
-import {Gif} from '@phosphor-icons/react'
-import { useGifStore } from '../../app/gifStore';
+import React from "react";
+import { Button } from "../ui/button";
+import { Paperclip, Image, MessageSquare, NotebookPen } from "lucide-react";
+import EmojiPicker from "./EmojiPicker";
+import { Gif } from "@phosphor-icons/react";
+import { useGifStore } from "../../app/gifStore";
 interface ChatActionsProps {
   handleNoteClick: () => void;
   handleReplyClick: () => void;
   isLastMessageNoted: boolean;
   isReplyActive: boolean;
-  handleEmojiSelect: ()=> void; 
-
+  handleEmojiSelect: (emoji: string) => void;
 }
 
-const ChatActions: React.FC<ChatActionsProps> = ({ 
-  handleNoteClick, 
-  handleReplyClick, 
-  isLastMessageNoted, 
+const ChatActions: React.FC<ChatActionsProps> = ({
+  handleNoteClick,
+  handleReplyClick,
+  isLastMessageNoted,
   isReplyActive,
-  handleEmojiSelect 
+  handleEmojiSelect,
 }) => {
- const {toggleGif} = useGifStore(); 
- const handleClick = ()=>{
-  console.log("i am in the chaataction ")
-  toggleGif(); 
-}
+  const { toggleGif } = useGifStore();
+  const handleClick = () => {
+    toggleGif();
+  };
   return (
     <div className="flex justify-between items-center align-middle">
       <div className="flex space-x-2">
-        <Button variant="ghost" size="sm" className="hover:bg-gray-200" onClick={handleClick}  >
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hover:bg-gray-200"
+          onClick={handleClick}
+        >
           {/* <LayoutDashboard className="h-4 w-4" /> */}
-          <Gif size={32}  />
+          <Gif size={32} />
         </Button>
         <Button variant="ghost" size="sm" className="hover:bg-gray-200">
-          <Paperclip  className="h-4 w-4" />
+          <Paperclip className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="sm" className="hover:bg-gray-200">
           <Image className="h-4 w-4" />
         </Button>
-          <EmojiPicker onSelectEmoji={handleEmojiSelect} />
+        <EmojiPicker onSelectEmoji={handleEmojiSelect} />
       </div>
       <div className="flex space-x-2">
         <Button
           variant="outline"
           size="sm"
           className={`flex items-center space-x-1 px-3 py-1 border border-gray-300 rounded-full hover:bg-gray-200 ${
-            isReplyActive ? 'bg-blue-100' : ''
+            isReplyActive ? "bg-blue-100" : ""
           }`}
           onClick={handleReplyClick}
         >
@@ -55,7 +58,7 @@ const ChatActions: React.FC<ChatActionsProps> = ({
           variant="outline"
           size="sm"
           className={`px-3 py-1 border border-gray-300 rounded-full hover:bg-gray-200 ${
-            isLastMessageNoted ? 'bg-yellow-100' : ''
+            isLastMessageNoted ? "bg-yellow-100" : ""
           }`}
           onClick={handleNoteClick}
         >

@@ -9,11 +9,11 @@ import { useGifStore } from "../../app/gifStore";
 const gf = new GiphyFetch("sG67AALL8JPT6lHv0T1UmRqTxWYhhz0o");
 
 export default function Giphy() {
-  const gridRef = useRef(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState("");
-  const [error, setError] = useState(null);
-  const [gifs, setGifs] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [gifs, setGifs] = useState<IGif[]>([]);
 
   const fetchGifs = async (offset: number) => {
     return gf.search(value || "trending", { offset, limit: 10 });
@@ -51,7 +51,11 @@ export default function Giphy() {
     };
 
     fetchInitialGifs();
-  }, []);
+
+    return () => {
+      debouncedfetchGifs.cancel();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleGifClick = (gif: IGif, e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -102,6 +106,7 @@ export default function Giphy() {
             columns={3}
             gutter={6}
             key={value}
+            noLink={true}
             ref={gridRef}
           />
         ) : (

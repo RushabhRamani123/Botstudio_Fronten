@@ -6,21 +6,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+} from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
 import useStore from '../../app/chatStore';
-
-interface GifModalProps {
-  currentConversation: string;
-  user: {
-    _id: string;
-  };
-  onSend?: (data: any) => void;
-}
-
-const GifModal: React.FC<GifModalProps> = ({ currentConversation, user, onSend }) => {
+const GifModal: React.FC = () => {
   const { isModalOpen, selectedGifUrl , toggleGifModal } = useGifStore();
   const {addMessage} = useStore(); 
   const [message, setMessage] = useState("");

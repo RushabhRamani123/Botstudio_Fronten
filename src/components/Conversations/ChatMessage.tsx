@@ -2,26 +2,8 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Card, CardContent } from '../ui/card';
 import { Bot, TriangleAlert } from 'lucide-react';
-
-interface ChatMessageProps {
-  text?: string;
-  GIFlink?: string;
-  ImageLink?: string; 
-  sender: 'user' | 'employee' | 'bot';
-  timestamp: string;
-  isNote?: boolean;
-  avatarSrc: string;
-  dateSeparator?: string;
-}
-
-const DateSeparator: React.FC<{ date: string }> = ({ date }) => (
-  <div className="flex items-center my-4">
-    <div className="flex-grow border-t border-gray-300"></div>
-    <div className="mx-4 text-xs text-white rounded-md p-2 bg-gray-400 uppercase">{date}</div>
-    <div className="flex-grow border-t border-gray-300"></div>
-  </div>
-);
-
+import DateSeparator from './DateSeprator'; 
+import { ChatMessageProps } from './ChatDTO';
 const ChatMessage: React.FC<ChatMessageProps> = ({
   text,
   GIFlink,
@@ -35,13 +17,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const isUser = sender === 'user';
   const isEmployee = sender === 'employee';
   const isBot = sender === 'bot';
-
+  // This gives different color for employee | customer 
   const getBackgroundColor = () => {
     if (isEmployee) return isNote ? 'bg-yellow-100' : 'bg-green-100';
     return 'bg-gray-100';
   };
-
+// This function renders different type of messages.
   const renderContent = () => {
+  // This is for the GIF Link 
     if (GIFlink) {
       return (
         <div className="relative">
@@ -62,7 +45,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </div>
       );
     }
-  
+  // This is the Image link 
     if (ImageLink) {
       return (
         <div className="relative">
@@ -79,21 +62,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </div>
       );
     }
-  
+  // This is for the text message 
     if (text) {
       return (
         <p className={`text-sm ${isNote ? 'font-medium' : ''}`}>{text}</p>
       );
     }
-  
     return null;
   };
-
   return (
     <>
+      {/* This UI will come when datesprator  is needed */}
       {dateSeparator && <DateSeparator date={dateSeparator} />}
-
+      {/* The UI for the messsage  */}
       <div className={`flex items-start ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+        {/* This is for the Avatar */}
         {!isUser && (
           <Avatar className="h-8 w-8 mr-2">
             {isBot ? (
@@ -107,7 +90,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             )}
           </Avatar>
         )}
-
+        {/* This for the message UI  */}
         <Card className={`max-w-[80%] ${getBackgroundColor()}`}>
           <CardContent className="p-3">
             <div className="flex items-start">
@@ -124,7 +107,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             </div>
           </CardContent>
         </Card>
-
+        {/* This is for the Avatar Fallback */}
         {isUser && (
           <Avatar className="h-8 w-8 ml-2">
             <AvatarImage src={avatarSrc} alt="You" />
@@ -135,5 +118,4 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     </>
   );
 };
-
 export default ChatMessage;

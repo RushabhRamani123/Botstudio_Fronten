@@ -11,9 +11,7 @@ const Messages: React.FC = () => {
       </div>
       {isChatListVisible && (
         <div className="w-[319px] border-r border-gray-200">
-          <ChatList 
-            onClose={() => setIsChatListVisible(false)} 
-          />
+          <ChatList onClose={() => setIsChatListVisible(false)} />
         </div>
       )}
       <div className="flex flex-grow">

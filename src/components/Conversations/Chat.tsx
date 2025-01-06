@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars-2';
-import UserProfile from './UserProfile';
-import ChatHeader from './ChatHeader';
-import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
-import ChatActions from './ChatActions';
-import useStore from '../../app/chatStore';
-import Giphy from './Giphy';
-import GifModal from './GifModal';
-import { useGifStore } from '../../app/gifStore';
+import React, { useEffect, useRef, useState } from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
+import UserProfile from "./UserProfile";
+import ChatHeader from "./ChatHeader";
+import ChatMessage from "./ChatMessage";
+import ChatInput from "./ChatInput";
+import ChatActions from "./ChatActions";
+import useStore from "../../app/chatStore";
+import Giphy from "./Giphy";
+import GifModal from "./GifModal";
+import { useGifStore } from "../../app/gifStore";
 
 // Define styles for animations
 const styles = `
@@ -45,14 +45,14 @@ const styles = `
 const Chat: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNoteActive, setIsNoteActive] = useState(false);
-  const [isReplyActive, setIsReplyActive] = useState(false);
-  const [Emoji,setEmoji] = useState(''); 
+  const [isReplyActive, setIsReplyActive] = useState<boolean>(false);
+  const [Emoji, setEmoji] = useState<string>("");
   const { messages, addMessage, selectedChatId, chats } = useStore();
-  const selectedChat = chats.find(chat => chat.id === selectedChatId);
+  const selectedChat = chats.find((chat) => chat.id === selectedChatId);
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const scrollbarsRef = useRef<Scrollbars>(null);
-  const {gifVissible} = useGifStore();
+  const { gifVissible } = useGifStore();
   // Add styles to document
   useEffect(() => {
     const styleSheet = document.createElement("style");
@@ -74,10 +74,15 @@ const Chat: React.FC = () => {
   const handleSendMessage = (text: string) => {
     if (text.trim()) {
       addMessage({
+        id: "1",
+        chatId: "3",
         text,
-        sender: 'employee',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isNote: isNoteActive
+        sender: "employee",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        isNote: isNoteActive,
       });
       setIsNoteActive(false);
       setIsReplyActive(false);
@@ -96,23 +101,23 @@ const Chat: React.FC = () => {
 
   const renderThumb = () => {
     const thumbStyle = {
-      backgroundColor: '#888',
-      borderRadius: '4px',
+      backgroundColor: "#888",
+      borderRadius: "4px",
     };
     return <div style={thumbStyle} />;
   };
-  const handleEmojiSelect = (emoji)=>{
+  const handleEmojiSelect = (emoji: string) => {
     console.log("This is in the chat");
-    console.log(emoji); 
-    setEmoji(emoji); 
-  }
+    console.log(emoji);
+    setEmoji(emoji);
+  };
   const renderTrackVertical = () => {
     const trackStyle = {
-      backgroundColor: '#f1f1f1',
-      right: '2px',
-      bottom: '2px',
-      top: '2px',
-      borderRadius: '3px',
+      backgroundColor: "#f1f1f1",
+      right: "2px",
+      bottom: "2px",
+      top: "2px",
+      borderRadius: "3px",
     };
     return <div style={trackStyle} />;
   };
@@ -130,36 +135,53 @@ const Chat: React.FC = () => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <linearGradient id="backgroundGradient" x1="0" y1="0" x2="120" y2="120">
-                <stop offset="0%" stopColor="#EBF4FF"/>
-                <stop offset="100%" stopColor="#DBEAFE"/>
+              <linearGradient
+                id="backgroundGradient"
+                x1="0"
+                y1="0"
+                x2="120"
+                y2="120"
+              >
+                <stop offset="0%" stopColor="#EBF4FF" />
+                <stop offset="100%" stopColor="#DBEAFE" />
               </linearGradient>
-              
+
               <linearGradient id="dotGradient" x1="0" y1="0" x2="0" y2="10">
-                <stop offset="0%" stopColor="#3B82F6"/>
-                <stop offset="100%" stopColor="#2563EB"/>
+                <stop offset="0%" stopColor="#3B82F6" />
+                <stop offset="100%" stopColor="#2563EB" />
               </linearGradient>
-              
-              <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.1"/>
+
+              <filter
+                id="dropShadow"
+                x="-20%"
+                y="-20%"
+                width="140%"
+                height="140%"
+              >
+                <feDropShadow
+                  dx="0"
+                  dy="2"
+                  stdDeviation="2"
+                  floodOpacity="0.1"
+                />
               </filter>
             </defs>
 
-            <circle cx="60" cy="60" r="60" fill="url(#backgroundGradient)"/>
-            
+            <circle cx="60" cy="60" r="60" fill="url(#backgroundGradient)" />
+
             <path
               d="M35 45C35 39.4772 39.4772 35 45 35H75C80.5228 35 85 39.4772 85 45V65C85 70.5228 80.5228 75 75 75H45C39.4772 75 35 70.5228 35 65V45Z"
               fill="white"
               filter="url(#dropShadow)"
             />
-            
+
             <circle
               className="animate-bounce-dot"
               cx="50"
               cy="55"
               r="5"
               fill="url(#dotGradient)"
-              style={{ animationDelay: '0s' }}
+              style={{ animationDelay: "0s" }}
             />
             <circle
               className="animate-bounce-dot"
@@ -167,7 +189,7 @@ const Chat: React.FC = () => {
               cy="55"
               r="5"
               fill="url(#dotGradient)"
-              style={{ animationDelay: '0.2s' }}
+              style={{ animationDelay: "0.2s" }}
             />
             <circle
               className="animate-bounce-dot"
@@ -175,17 +197,21 @@ const Chat: React.FC = () => {
               cy="55"
               r="5"
               fill="url(#dotGradient)"
-              style={{ animationDelay: '0.4s' }}
+              style={{ animationDelay: "0.4s" }}
             />
-            
+
             <path
               d="M45 75L35 90H85L75 75H45Z"
               fill="white"
               filter="url(#dropShadow)"
             />
           </svg>
-          <h2 className="text-2xl font-semibold mb-4 animate-fade-in">Start a Conversation</h2>
-          <p className="text-gray-600 animate-fade-in">Please select a conversation from the sidebar to start chatting</p>
+          <h2 className="text-2xl font-semibold mb-4 animate-fade-in">
+            Start a Conversation
+          </h2>
+          <p className="text-gray-600 animate-fade-in">
+            Please select a conversation from the sidebar to start chatting
+          </p>
         </div>
       </div>
     );
@@ -194,7 +220,6 @@ const Chat: React.FC = () => {
   return (
     <div className="flex w-full h-screen">
       <div className="flex-1 flex flex-col border-r">
-        
         {/* CHAT HEADER */}
         <ChatHeader
           userName={selectedChat.name}
@@ -202,8 +227,7 @@ const Chat: React.FC = () => {
           openDrawer={openDrawer}
         />
 
-
-      {/* CHAT MESSAGES */}
+        {/* CHAT MESSAGES */}
         <div className="flex-1 overflow-hidden">
           <Scrollbars
             ref={scrollbarsRef}
@@ -215,8 +239,8 @@ const Chat: React.FC = () => {
           >
             <div className="p-4 space-y-4">
               {messages.map((entry, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   ref={index === messages.length - 1 ? lastMessageRef : null}
                   className="message-fade-in"
                 >
@@ -236,30 +260,31 @@ const Chat: React.FC = () => {
           </Scrollbars>
         </div>
 
-
-
         {/* CHAT FOOTER */}
         <div className="bg-white p-4 border-t-2 border-blue-300 ">
-          <ChatInput Emoji={Emoji} setEmoji={setEmoji} Note={isNoteActive} handleSendMessage={handleSendMessage} />
-          <ChatActions 
+          <ChatInput
+            Emoji={Emoji}
+            setEmoji={setEmoji}
+            Note={isNoteActive}
+            handleSendMessage={handleSendMessage}
+          />
+          <ChatActions
             handleNoteClick={handleNoteClick}
             handleReplyClick={handleReplyClick}
             isLastMessageNoted={isNoteActive}
             isReplyActive={isReplyActive}
             handleEmojiSelect={handleEmojiSelect}
           />
-          <div>
-          { gifVissible && <Giphy />}
-          </div>
-           
+          <div>{gifVissible && <Giphy />}</div>
         </div>
-
-
       </div>
-      
-      <UserProfile isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+
+      <UserProfile
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
       {/* This is the modal thing  */}
-      <GifModal /> 
+      <GifModal />
     </div>
   );
 };

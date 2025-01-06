@@ -1,14 +1,29 @@
-import { Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar"
-import CreateAndEditFlow from "./components/Bot/Flow/CreateAndEditFlow";
+import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+import Navbar from "./components/Navbar";
+import Login from "./components/Auth/Details/Login/Login";
+import Signup from "./components/Auth/Signup";
+import SignupFlow from "./components/Auth/Details/Details";
+import EmailCheckComponent from "./components/Auth/CheckyourEmail";
+import EmailVerificationUI from "./components/Auth/EmailVerified";
+import ForgotPassword from "./components/Auth/Forgotpassword";
+import SetNewPasswordComponent from "./components/Auth/SetNewPassword";
+
 function App() {
   return (
     <>
-      <Navbar /> 
       <Routes>
-            <Route path='/bot/flow' element={<CreateAndEditFlow /> }/>
-          </Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup-details" element={<SignupFlow />} />
+        <Route path="/check-email" element={<EmailCheckComponent />} />
+        <Route path="/email-verified" element={<EmailVerificationUI />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<SetNewPasswordComponent />} />
+        <Route path="/*" element={<ProtectedRoute><Navbar/></ProtectedRoute>} /> 
+      </Routes>
     </>
-  )
+  );
 }
+
 export default App;

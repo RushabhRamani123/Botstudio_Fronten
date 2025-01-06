@@ -1,31 +1,28 @@
-import React, { useState, KeyboardEvent, useEffect } from 'react';
+import React, { useState, KeyboardEvent, useEffect } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Send } from 'lucide-react';
-
-interface ChatInputProps {
-  handleSendMessage: (message: string) => void;
-  Note: boolean;
-  Emoji:string; 
-}
-
-const ChatInput: React.FC<ChatInputProps> = ({ Note,Emoji,setEmoji,handleSendMessage}) => {
-  const [message, setMessage] = useState('');
+import { Send } from "lucide-react";
+import { ChatInputProps } from "./ChatDTO";
+const ChatInput: React.FC<ChatInputProps> = ({
+  Note,
+  Emoji,
+  setEmoji,
+  handleSendMessage,
+}) => {
+  const [message, setMessage] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isFocused, setIsFocused] = useState(false);
-
   const sendMessage = () => {
     if (message.trim()) {
       handleSendMessage(message);
-      setMessage('');
+      setMessage("");
     }
   };
   useEffect(() => {
-    setMessage(prevMessage => prevMessage + Emoji);
-    setEmoji('');
+    setMessage((prevMessage) => prevMessage + Emoji);
+    setEmoji("");
   }, [Emoji]);
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       sendMessage();
     }
   };

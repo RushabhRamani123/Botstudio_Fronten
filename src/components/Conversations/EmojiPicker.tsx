@@ -3,29 +3,29 @@ import { useEffect, useRef, useState } from "react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Button } from "../ui/button";
-
-export default function EmojiPicker({onSelectEmoji}) {
+import { EmojiThing,EmojiPickerProps } from "./ChatDTO";
+const EmojiPicker = ({ onSelectEmoji }: EmojiPickerProps) => {
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [selectEmoji, setSelectEmoji] = useState([]); 
-  const pickerRef = useRef(null);
-  const buttonRef = useRef(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleSelectEmoji = (emoji) => {
-    onSelectEmoji(emoji.native); 
-  }
+  const handleSelectEmoji = (emoji: EmojiThing) => {
+    console.log(emoji);
+    onSelectEmoji(emoji.native);
+  };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         pickerRef.current &&
-        !pickerRef.current.contains(event.target) &&
+        !pickerRef.current.contains(event.target as Node) &&
         buttonRef.current &&
-        !buttonRef.current.contains(event.target)
+        !buttonRef.current.contains(event.target as Node)
       ) {
         setPickerOpen(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -34,21 +34,18 @@ export default function EmojiPicker({onSelectEmoji}) {
     <div className="relative inline-block">
       <Button
         ref={buttonRef}
-        variant="ghost" 
-        size="sm" 
+        variant="ghost"
+        size="sm"
         className="hover:bg-gray-200"
         onClick={() => setPickerOpen(!pickerOpen)}
       >
         <Smile className="h-4 w-4" />
       </Button>
-      
+
       {pickerOpen && (
-        <div 
-          ref={pickerRef}
-          className="absolute bottom-12 right-0 z-50"
-        >
+        <div ref={pickerRef} className="absolute bottom-12 right-0 z-50">
           <Picker
-            theme={'light'}
+            theme="light"
             data={data}
             onEmojiSelect={handleSelectEmoji}
             previewPosition="none"
@@ -60,4 +57,5 @@ export default function EmojiPicker({onSelectEmoji}) {
       )}
     </div>
   );
-}
+};
+export default EmojiPicker;

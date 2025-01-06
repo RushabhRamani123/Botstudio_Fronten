@@ -51,18 +51,15 @@ const ContactEmailPage = () => {
         : [...prev, contact]
     );
   };
-
   const removeContact = (contactToRemove) => {
     setSelectedContacts(prev => prev.filter(contact => contact.id !== contactToRemove.id));
   };
-
   const handleSendEmail = () => {
     console.log('Sending email to:', selectedContacts);
     console.log('Subject:', emailSubject);
     console.log('Body:', emailBody);
     alert('Email sent successfully!');
   };
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="container mx-auto max-w-6xl">
