@@ -21,6 +21,14 @@ import ImageInputNode from "./CustomeNode/Bubbles/ImageinputNode";
 import VideoInputNode from "./CustomeNode/Bubbles/VideoInputNode";
 import EmbedInputNode from "./CustomeNode/Bubbles/EmbedinputNode";
 import AudioInputNode from "./CustomeNode/Bubbles/AudioinputNOde";
+import InputNode from "./CustomeNode/Input/TextInput";
+import NumberInputNode from "./CustomeNode/Input/NumberInputNode";
+import EmailInputNode from "./CustomeNode/Input/EmailInputNode";
+import DateInputNode from "./CustomeNode/Input/DateInputNode";
+import PhoneInputNode from "./CustomeNode/Input/PhoneInputNode";
+import PaymentNode from "./CustomeNode/Input/PaymentInputNode";
+import FileInputNode from "./CustomeNode/Input/FileInputNode";
+import RatingInputNode from "./CustomeNode/Input/RatingNode";
 const initialNodes = [
   {
     id: "node-1",
@@ -45,6 +53,14 @@ const FlowEditor = () => {
       video: VideoInputNode,
       embed: EmbedInputNode,
       audio: AudioInputNode,
+      textInput:InputNode,
+      number:NumberInputNode,
+      email:EmailInputNode,
+      date:DateInputNode,
+      phone:PhoneInputNode,
+      payment:PaymentNode,
+      file:FileInputNode,
+      rating:RatingInputNode
     }),
     []
   );
