@@ -6,7 +6,6 @@ export interface CustomerMetadata {
   memberSince: string;
   previousInteractions: number;
 }
-
 export interface LastMessage {
   text: string;
   sender: 'user' | 'employee' | 'bot';
@@ -15,7 +14,6 @@ export interface LastMessage {
   ticketId?: string;
   priority?: 'high' | 'medium' | 'low';
 }
-
 export interface Chat {
   id: string;
   name: string;
@@ -29,9 +27,7 @@ export interface Chat {
   assignedTo?: string;
   customerMetadata?: CustomerMetadata;
   lastMessage?: LastMessage;
-  department?: string;
 }
-
 export interface Message {
   id:string; 
   chatId:string;
@@ -46,7 +42,6 @@ export interface Message {
   status?: 'active' | 'waiting' | 'resolved' | 'archived';
   ticketId?: string;
 }
-
 interface ChatStore {
   chats: Chat[];
   selectedChatId: string | null;
@@ -55,15 +50,12 @@ interface ChatStore {
   addMessage: (message: Message) => void;
   getFilteredChats: (filter?: ChatFilter) => Chat[];
 }
-
 export interface ChatFilter {
   type: 'quick-access' | 'active'  | 'status';
   subtype?: string;
 }
-
 // Initialize with empty array instead of Chat import
-const initialChats: Chat[] = Chat;
-
+const initialChats: Chat[] = [];
 const useStore = create<ChatStore>()(
   persist(
     (set, get) => ({
@@ -101,14 +93,14 @@ const useStore = create<ChatStore>()(
         };
       }),
 
-      getFilteredChats: (filter: ChatFilter) => {
+      getFilteredChats: (filter?: ChatFilter) => {
         const state = get();
         const now = new Date();
 
-        switch (filter.type) {
+        switch (filter?.type) {
           case 'quick-access':
             return state.chats.filter(chat => {
-              switch (filter.subtype) {
+              switch (filter?.subtype) {
                 case 'you':
                   return chat.assignedTo === 'currentUser';
                 case 'mentions':
@@ -161,5 +153,4 @@ const useStore = create<ChatStore>()(
     }
   )
 );
-
 export default useStore;

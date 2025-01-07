@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface Flow {
   id: string;
@@ -34,60 +35,71 @@ interface BotStore {
   addFlow: (botId: string, flowName: string) => void;
 }
 
-export const useBotStore = create<BotStore>((set) => ({
-  bots: [
-   
-  ],
-  selectedBot: null,
-  isModalOpen: false,
-  newBotName: '',
-  setNewBotName: (name) => set({ newBotName: name }),
-  openModal: () => set({ isModalOpen: true }),
-  closeModal: () => set({ isModalOpen: false, newBotName: '' }),
-  addBot: (name) => set((state) => ({
-    bots: [...state.bots, {
-      id: (state.bots.length + 1).toString(),
-      name,
-      lastUpdated: 'Just now',
-      flows: 0,
-      sessions: 0,
-      dropped: 0,
-      flowDetails: []
-    }],
-    isModalOpen: false,
-    newBotName: ''
-  })),
-  selectBot: (id) => set((state) => ({
-    selectedBot: state.bots.find(bot => bot.id === id) || null
-  })),
-  addFlow: (botId, flowName) => set((state) => {
-    const updatedBots = state.bots.map(bot => {
-      if (bot.id === botId) {
-        const newFlow = {
-          id: (bot.flowDetails.length + 1).toString(),
-          name: flowName,
-          triggers: "New Trigger",
-          lastPublishedAt: "-",
+export const useBotStore = create<BotStore>()(
+  persist(
+    (set) => ({
+      bots: [],
+      selectedBot: null,
+      isModalOpen: false,
+      newBotName: '',
+      setNewBotName: (name) => set({ newBotName: name }),
+      openModal: () => set({ isModalOpen: true }),
+      closeModal: () => set({ isModalOpen: false, newBotName: '' }),
+      addBot: (name) => set((state) => ({
+        bots: [...state.bots, {
+          id: (state.bots.length + 1).toString(),
+          name,
+          lastUpdated: 'Just now',
+          flows: 0,
           sessions: 0,
-          completed: 0,
           dropped: 0,
-          status: "In Draft"
-        };
+          flowDetails: []
+        }],
+        isModalOpen: false,
+        newBotName: ''
+      })),
+      selectBot: (id) => set((state) => ({
+        selectedBot: state.bots.find(bot => bot.id === id) || null
+      })),
+      addFlow: (botId, flowName) => set((state) => {
+        const updatedBots = state.bots.map(bot => {
+          if (bot.id === botId) {
+            const newFlow = {
+              id: (bot.flowDetails.length + 1).toString(),
+              name: flowName,
+              triggers: "New Trigger",
+              lastPublishedAt: "-",
+              sessions: 0,
+              completed: 0,
+              dropped: 0,
+              status: "In Draft"
+            };
+            return {
+              ...bot,
+              flows: bot.flows + 1,
+              flowDetails: [...bot.flowDetails, newFlow],
+              lastUpdated: 'Just now'
+            };
+          }
+          return bot;
+        });
+
+        const updatedSelectedBot = updatedBots.find(bot => bot.id === botId) || null;
+
         return {
-          ...bot,
-          flows: bot.flows + 1,
-          flowDetails: [...bot.flowDetails, newFlow],
-          lastUpdated: 'Just now'
+          bots: updatedBots,
+          selectedBot: updatedSelectedBot
         };
-      }
-      return bot;
-    });
-
-    const updatedSelectedBot = updatedBots.find(bot => bot.id === botId) || null;
-
-    return {
-      bots: updatedBots,
-      selectedBot: updatedSelectedBot
-    };
-  }),
-}));
+      }),
+    }),
+    {
+      name: 'bot-storage', // unique name for localStorage key
+      storage: createJSONStorage(() => localStorage), // use localStorage as the storage
+      partialize: (state) => ({
+        // Only persist these fields
+        bots: state.bots,
+        selectedBot: state.selectedBot,
+      }),
+    }
+  )
+);

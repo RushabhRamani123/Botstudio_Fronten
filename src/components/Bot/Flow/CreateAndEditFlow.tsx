@@ -4,10 +4,8 @@ import { X, FileDown, Save } from 'lucide-react';
 import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
 import { Skeleton } from "../../ui/skeleton";
-
 const Sidebar = lazy(() => import('./Sidebar'));
 const FlowEditor = lazy(() => import('./FlowEditor'));
-
 const SidebarSkeleton = () => (
   <div className="w-64 border-r border-gray-200 h-full bg-white">
     <div className="p-4 space-y-4">
@@ -20,7 +18,6 @@ const SidebarSkeleton = () => (
     </div>
   </div>
 );
-
 const FlowEditorSkeleton = () => (
   <div className="flex-1 bg-gray-50 p-4">
     <div className="h-full border-2 border-dashed border-gray-300 rounded-lg bg-white/50 flex items-center justify-center">
@@ -32,10 +29,8 @@ const FlowEditorSkeleton = () => (
     </div>
   </div>
 );
-
 const CreateAndEditFlow: React.FC = () => {
   const navigate = useNavigate();
-
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Card className="shadow-sm rounded-none border-b border-gray-200">
@@ -90,5 +85,4 @@ const CreateAndEditFlow: React.FC = () => {
     </div>
   );
 };
-
 export default CreateAndEditFlow;
