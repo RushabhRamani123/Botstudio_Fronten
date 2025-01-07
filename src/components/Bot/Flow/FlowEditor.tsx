@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ReactFlow,
   Background,
@@ -10,106 +11,133 @@ import {
   Edge,
   Connection,
   ReactFlowInstance,
-  EdgeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback, useMemo, useState, DragEvent } from "react";
-import CustomEdge from './CustomEdge';
+import CustomEdge from "./CustomEdge";
 import StartNode from "./CustomeNode/StartNode";
-
-// const initialNodes: Node[] = 
+import InputTextNode from "./CustomeNode/Bubbles/InputNode";
+import ImageInputNode from "./CustomeNode/Bubbles/ImageinputNode";
+import VideoInputNode from "./CustomeNode/Bubbles/VideoInputNode";
+import EmbedInputNode from "./CustomeNode/Bubbles/EmbedinputNode";
+import AudioInputNode from "./CustomeNode/Bubbles/AudioinputNOde";
 const initialNodes = [
   {
-    id: 'node-1',
-    type: 'textUpdater',
+    id: "node-1",
+    type: "startnode",
     position: { x: 0, y: 0 },
     data: { value: 123 },
   },
 ];
-// we define the nodeTypes outside of the component to prevent re-renderings
-// you could also use useMemo inside the component
-const nodeTypes = { textUpdater: StartNode };
- 
-  
-
 const initialEdges: Edge[] = [];
-
-const edgeTypes: EdgeTypes = {
-  custom: CustomEdge,
-};
-
 let nodeId = 3;
-
 const FlowEditor = () => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
-
+  const [reactFlowInstance, setReactFlowInstance] =
+    useState<ReactFlowInstance | null>(null);
+  // Memoize nodeTypes
+  const nodeTypes = useMemo(
+    () => ({
+      startnode: StartNode,
+      text: InputTextNode,
+      image: ImageInputNode,
+      video: VideoInputNode,
+      embed: EmbedInputNode,
+      audio: AudioInputNode,
+    }),
+    []
+  );
+  // Memoize edgeTypes
+  const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     []
   );
-
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     []
   );
-
   const onConnect = useCallback(
     (connection: Connection) => {
-      // Check if the target node already has an incoming edge
       const targetHasEdge = edges.some(
-        edge => edge.target === connection.target
+        (edge) => edge.target === connection.target
       );
-
-      // Check if the source node already has an outgoing edge
       const sourceHasEdge = edges.some(
-        edge => edge.source === connection.source
+        (edge) => edge.source === connection.source
       );
-
-      // If either node already has a connection, prevent the new connection
       if (targetHasEdge || sourceHasEdge) {
         return;
       }
-
-      // If no existing connections, add the new edge
-      setEdges((eds) => addEdge({ ...connection, type: 'custom' }, eds));
+      setEdges((eds) => addEdge({ ...connection, type: "custom" }, eds));
     },
     [edges]
   );
-
   const onDragOver = useCallback((event: DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
-
   const onDrop = useCallback(
     (event: DragEvent) => {
+      console.log(event);
       event.preventDefault();
-
       if (!reactFlowInstance) return;
 
-      const nodeType = event.dataTransfer.getData('application/reactflow');
-
-      const { x, y } = reactFlowInstance.screenToFlowPosition({
+      const nodeType = event.dataTransfer.getData("application/reactflow");
+      const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
+      console.log("Check the position: ", position);
+      console.log("Check the nodetype: ", nodeType);
 
       const newNode: Node = {
         id: `${nodeId++}`,
         type: nodeType,
-        position: { x, y },
-        data: { label: `Node ${nodeType}` },
+        position,
+        data: {
+          // Add specific data for input text node
+          text: "",
+          onChange: (e: string) => {
+            // Handle text changes
+           console.log(e);   
+            // You can update node data here if needed
+          },
+        },
       };
-
+      console.log(newNode);
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance]
   );
-
-  return (
-    <div className="h-screen w-full">
+  // Memoize default edge options
+  const defaultEdgeOptions = useMemo(() => ({ type: "custom" }), []);
+  // Memoize background styles
+  const backgroundStyle = useMemo(
+    () => ({
+      backgroundColor: "#f1f5f9",
+    }),
+    []
+  );
+  // Memoize control styles
+  const controlStyle = useMemo(
+    () => ({
+      backgroundColor: "#ffffff",
+      border: "1px solid #e2e8f0",
+      borderRadius: "8px",
+    }),
+    []
+  );
+  // Memoize container style
+  const containerStyle = useMemo(
+    () => ({
+      background: "#ffffff",
+    }),
+    []
+  );
+  // Memoize the ReactFlow component
+  const memoizedFlow = useMemo(
+    () => (
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -121,30 +149,36 @@ const FlowEditor = () => {
         onDragOver={onDragOver}
         edgeTypes={edgeTypes}
         nodeTypes={nodeTypes}
-        defaultEdgeOptions={{ type: 'custom' }}
+        defaultEdgeOptions={defaultEdgeOptions}
         fitView
-        style={{ background: "#ffffff" }}
+        style={containerStyle}
       >
         <Background
           color="#94a3b8"
           variant={BackgroundVariant.Dots}
           gap={24}
           size={1.5}
-          style={{
-            backgroundColor: "#f1f5f9",
-          }}
+          style={backgroundStyle}
         />
-        <Controls
-          position="top-right"
-          style={{
-            backgroundColor: "#ffffff",
-            border: "1px solid #e2e8f0",
-            borderRadius: "8px",
-          }}
-        />
+        <Controls position="top-right" style={controlStyle} />
       </ReactFlow>
-    </div>
+    ),
+    [
+      nodes,
+      edges,
+      onNodesChange,
+      onEdgesChange,
+      onConnect,
+      onDrop,
+      onDragOver,
+      edgeTypes,
+      nodeTypes,
+      defaultEdgeOptions,
+      containerStyle,
+      backgroundStyle,
+      controlStyle,
+    ]
   );
+  return <div className="h-screen w-full">{memoizedFlow}</div>;
 };
-
 export default FlowEditor;
