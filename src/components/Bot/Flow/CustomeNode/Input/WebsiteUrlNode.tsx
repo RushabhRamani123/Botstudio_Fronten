@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '../../../../ui/dialog';
 
 const URLInputNode = ({ data, onVariableChange }) => {
   const [open, setOpen] = useState(false);

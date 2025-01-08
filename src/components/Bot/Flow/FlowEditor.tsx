@@ -29,6 +29,7 @@ import PhoneInputNode from "./CustomeNode/Input/PhoneInputNode";
 import PaymentNode from "./CustomeNode/Input/PaymentInputNode";
 import FileInputNode from "./CustomeNode/Input/FileInputNode";
 import RatingInputNode from "./CustomeNode/Input/RatingNode";
+import URLInputNode from "./CustomeNode/Input/WebsiteUrlNode";
 const initialNodes = [
   {
     id: "node-1",
@@ -60,7 +61,8 @@ const FlowEditor = () => {
       phone:PhoneInputNode,
       payment:PaymentNode,
       file:FileInputNode,
-      rating:RatingInputNode
+      rating:RatingInputNode,
+      website:URLInputNode,
     }),
     []
   );
