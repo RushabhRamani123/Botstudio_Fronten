@@ -11,9 +11,11 @@ import {
   Edge,
   Connection,
   ReactFlowInstance,
+  NodeChange,
+  EdgeChange
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useMemo, useState, DragEvent } from "react";
+import { useCallback, useMemo, useState, DragEvent, useEffect } from "react";
 import CustomEdge from "./CustomEdge";
 import StartNode from "./CustomeNode/StartNode";
 import InputTextNode from "./CustomeNode/Bubbles/InputNode";
@@ -30,6 +32,7 @@ import PaymentNode from "./CustomeNode/Input/PaymentInputNode";
 import FileInputNode from "./CustomeNode/Input/FileInputNode";
 import RatingInputNode from "./CustomeNode/Input/RatingNode";
 import URLInputNode from "./CustomeNode/Input/WebsiteUrlNode";
+
 const initialNodes = [
   {
     id: "node-1",
@@ -38,13 +41,45 @@ const initialNodes = [
     data: { value: 123 },
   },
 ];
+
 const initialEdges: Edge[] = [];
+
+interface FlowEditorProps {
+  onSave: boolean;
+  onFlowSave?: (flowData: { nodes: Node[]; edges: Edge[] }) => void;
+}
+
 let nodeId = 3;
-const FlowEditor = () => {
+
+const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Save effect
+  useEffect(() => {
+    const saveFlow = async () => {
+      if (onSave && onFlowSave) {
+        try {
+          setIsLoading(true);
+          await onFlowSave({
+            nodes,
+            edges,
+          });
+          console.log('Flow saved successfully');
+        } catch (error) {
+          console.error('Error saving flow:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    saveFlow();
+  }, [onSave, onFlowSave, nodes, edges]);
+
   // Memoize nodeTypes
   const nodeTypes = useMemo(
     () => ({
@@ -54,28 +89,32 @@ const FlowEditor = () => {
       video: VideoInputNode,
       embed: EmbedInputNode,
       audio: AudioInputNode,
-      textInput:InputNode,
-      number:NumberInputNode,
-      email:EmailInputNode,
-      date:DateInputNode,
-      phone:PhoneInputNode,
-      payment:PaymentNode,
-      file:FileInputNode,
-      rating:RatingInputNode,
-      website:URLInputNode,
+      textInput: InputNode,
+      number: NumberInputNode,
+      email: EmailInputNode,
+      date: DateInputNode,
+      phone: PhoneInputNode,
+      payment: PaymentNode,
+      file: FileInputNode,
+      rating: RatingInputNode,
+      website: URLInputNode,
     }),
     []
   );
+
   // Memoize edgeTypes
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
+
   const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
     []
   );
+
   const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     []
   );
+
   const onConnect = useCallback(
     (connection: Connection) => {
       const targetHasEdge = edges.some(
@@ -91,13 +130,14 @@ const FlowEditor = () => {
     },
     [edges]
   );
+
   const onDragOver = useCallback((event: DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
+
   const onDrop = useCallback(
     (event: DragEvent) => {
-      console.log(event);
       event.preventDefault();
       if (!reactFlowInstance) return;
 
@@ -106,38 +146,56 @@ const FlowEditor = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      console.log("Check the position: ", position);
-      console.log("Check the nodetype: ", nodeType);
 
-      const newNode: Node = {
-        id: `${nodeId++}`,
-        type: nodeType,
-        position,
-        data: {
-          // Add specific data for input text node
-          text: "",
-          onChange: (e: string) => {
-            // Handle text changes
-           console.log(e);   
-            // You can update node data here if needed
-          },
-        },
-      };
-      console.log(newNode);
+      let newNode: Node;
+
+      switch (nodeType) {
+        case "startnode":
+          newNode = {
+            id: `${nodeId++}`,
+            type: nodeType,
+            position,
+            data: { value: 123 },
+          };
+          break;
+
+        case "text":
+          newNode = {
+            id: `${nodeId++}`,
+            type: nodeType,
+            position,
+            data: {
+              text: "",
+              onChange: (text: string) => {
+                console.log(text);
+              },
+            },
+          };
+          break;
+
+        // ... rest of your existing switch cases ...
+        default:
+          newNode = {
+            id: `${nodeId++}`,
+            type: nodeType,
+            position,
+            data: { value: "" },
+          };
+      }
+
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance]
   );
-  // Memoize default edge options
-  const defaultEdgeOptions = useMemo(() => ({ type: "custom" }), []);
-  // Memoize background styles
+
+  // Memoize styles
   const backgroundStyle = useMemo(
     () => ({
       backgroundColor: "#f1f5f9",
     }),
     []
   );
-  // Memoize control styles
+
   const controlStyle = useMemo(
     () => ({
       backgroundColor: "#ffffff",
@@ -146,44 +204,55 @@ const FlowEditor = () => {
     }),
     []
   );
-  // Memoize container style
+
   const containerStyle = useMemo(
     () => ({
       background: "#ffffff",
     }),
     []
   );
+
+  const defaultEdgeOptions = useMemo(() => ({ type: "custom" }), []);
+
   // Memoize the ReactFlow component
   const memoizedFlow = useMemo(
     () => (
-      <ReactFlow
-        nodes={nodes}
-        onNodesChange={onNodesChange}
-        edges={edges}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onInit={setReactFlowInstance}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        edgeTypes={edgeTypes}
-        nodeTypes={nodeTypes}
-        defaultEdgeOptions={defaultEdgeOptions}
-        fitView
-        style={containerStyle}
-      >
-        <Background
-          color="#94a3b8"
-          variant={BackgroundVariant.Dots}
-          gap={24}
-          size={1.5}
-          style={backgroundStyle}
-        />
-        <Controls position="top-right" style={controlStyle} />
-      </ReactFlow>
+      <div className="relative w-full h-full">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/50 z-50 flex items-center justify-center">
+            <div className="text-blue-600">Saving flow...</div>
+          </div>
+        )}
+        <ReactFlow
+          nodes={nodes}
+          onNodesChange={onNodesChange}
+          edges={edges}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          edgeTypes={edgeTypes}
+          nodeTypes={nodeTypes}
+          defaultEdgeOptions={defaultEdgeOptions}
+          fitView
+          style={containerStyle}
+        >
+          <Background
+            color="#94a3b8"
+            variant={BackgroundVariant.Dots}
+            gap={24}
+            size={1.5}
+            style={backgroundStyle}
+          />
+          <Controls position="top-right" style={controlStyle} />
+        </ReactFlow>
+      </div>
     ),
     [
       nodes,
       edges,
+      isLoading,
       onNodesChange,
       onEdgesChange,
       onConnect,
@@ -197,6 +266,8 @@ const FlowEditor = () => {
       controlStyle,
     ]
   );
+
   return <div className="h-screen w-full">{memoizedFlow}</div>;
 };
+
 export default FlowEditor;
