@@ -15,7 +15,6 @@ export interface CustomerMetadata {
   
   export interface Chat {
     id: string;
-    messageId: string;
     name: string;
     message: string;
     avatar: string;
@@ -31,6 +30,7 @@ export interface CustomerMetadata {
   
   export interface Message {
     id: string;
+    chatId:string;
     text?: string;
     GIFlink?: string;
     ImageLink?: string;

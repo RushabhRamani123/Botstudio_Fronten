@@ -1,92 +1,27 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ChatFilter, ChatStore } from './DTO';
-import { Message } from 'react-hook-form';
-
-
+import { initialMessages,initialChats } from '../data';
 const useStore = create<ChatStore>()(
   persist(
     (set, get) => ({
-      messages: [],
-      chats: [],
+      messages: initialMessages,
+      chats: initialChats,
       selectedChatId: null,
-      selectedMessageId: null,
-
-      setSelectedChat: (chatId) => {
-        const chat = get().chats.find(chat => chat.id === chatId);
-        if (!chat) {
-          console.warn(`Chat with id ${chatId} does not exist`);
-          return;
-        }
-        set({ 
-          selectedChatId: chatId,
-          selectedMessageId: chat.messageId 
-        });
-        console.log(chat); 
-        get().markChatAsRead(chatId);
+      setSelectedChatId:(ChatId:string)=>{
+      const chat = get().chats.find(chat => chat.id === ChatId);
+      if (!chat) {
+        console.warn(`Chat with id ${ChatId} does not exist`);
+        return;
+      }
+        set({selectedChatId:ChatId});
       },
-
-      clearSelectedChat: () => set({ 
-        selectedChatId: null,
-        selectedMessageId: null 
-      }),
-
-      getSelectedChatMessages: () => {
-        const state = get();
-        if (!state.selectedChatId) return [];
-        return state.messages
-          .filter(message => message.ticketId === state.selectedChatId)
-          .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-      },
-
       addMessage: (message) => set((state) => {
-        const newMessages = [...state.messages, message];
-        const updatedChats = state.chats.map(chat => {
-          if (chat.id === state.selectedChatId) {
-            return {
-              ...chat,
-              messageId: message.id,
-              message: message.text || '',
-              lastMessage: {
-                text: message.text || '',
-                sender: message.sender,
-                timestamp: message.timestamp,
-                isNote: message.isNote,
-                priority: message.priority,
-                ticketId: message.ticketId
-              },
-              status: message.status || chat.status,
-              priority: message.priority || chat.priority,
-              unread: message.sender !== 'employee'
-            };
-          }
-          return chat;
-        });
-
-        if (state.selectedChatId === message.ticketId) {
-          set({ selectedMessageId: message.id });
-        }
-
+        const newMessages = [...state.messages, message];        
         return {
           messages: newMessages,
-          chats: updatedChats
         };
       }),
-
-      updateMessageStatus: (messageId: string, status: Message['status']) => 
-        set((state) => ({
-          messages: state.messages.map(message =>
-            message.id === messageId ? { ...message, status } : message
-          )
-        })),
-
-      markChatAsRead: (chatId: string) => 
-        set((state) => ({
-          chats: state.chats.map(chat =>
-            chat.id === chatId ? { ...chat, unread: false } : chat
-          )
-        })),
-
       getFilteredChats: (filter?: ChatFilter) => {
         const state = get();
         const now = new Date();
@@ -142,10 +77,6 @@ const useStore = create<ChatStore>()(
         }
       },
     }),
-    {
-      name: 'chat-store'
-    }
   )
 );
-
 export default useStore;

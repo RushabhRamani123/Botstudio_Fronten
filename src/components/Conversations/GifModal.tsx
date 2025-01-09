@@ -11,9 +11,10 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import useStore from '../../app/chatStore';
+import { genUid } from '../../utils/genUid';
 const GifModal: React.FC = () => {
   const { isModalOpen, selectedGifUrl , toggleGifModal } = useGifStore();
-  const {addMessage} = useStore(); 
+  const {addMessage,selectedChatId} = useStore(); 
   const [message, setMessage] = useState("");
 useEffect(()=>{
   console.log(isModalOpen);
@@ -31,6 +32,8 @@ useEffect(()=>{
 
   const handleSendMessage = () => {
     addMessage({
+    id: genUid(),
+    chatId: selectedChatId,
     GIFlink:selectedGifUrl,
     text:message,
     sender:"employee",

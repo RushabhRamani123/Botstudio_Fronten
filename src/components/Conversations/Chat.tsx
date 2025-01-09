@@ -9,7 +9,7 @@ import useStore from "../../app/chatStore";
 import Giphy from "./Giphy";
 import GifModal from "./GifModal";
 import { useGifStore } from "../../app/gifStore";
-
+import { genUid } from "../../utils/genUid";
 // Define styles for animations
 const styles = `
 @keyframes bounce-dot {
@@ -74,8 +74,8 @@ const Chat: React.FC = () => {
   const handleSendMessage = (text: string) => {
     if (text.trim()) {
       addMessage({
-        id: "1",
-        chatId: "3",
+        id: genUid(),
+        chatId: selectedChatId,
         text,
         sender: "employee",
         timestamp: new Date().toLocaleTimeString([], {
@@ -238,7 +238,7 @@ const Chat: React.FC = () => {
             autoHideDuration={200}
           >
             <div className="p-4 space-y-4">
-              {messages.map((entry, index) => (
+              {messages.filter(message => message.chatId === selectedChatId).map((entry, index) => (
                 <div
                   key={index}
                   ref={index === messages.length - 1 ? lastMessageRef : null}
