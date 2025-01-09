@@ -16,7 +16,6 @@ export const useBotStore = create<BotStore>()(
       error: null,
       botId:null,
       flowId:null,
-
       // Bot Actions
       setNewBotName: (name) => set({ newBotName: name }),
       openModal: () => set({ isModalOpen: true }),

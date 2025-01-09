@@ -44,17 +44,25 @@ let nodeId = 3;
 
 const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
   const {selectedFlow} = useBotStore();
-  const initialNodes = [
+  const initialNodes = selectedFlow?.Nodes ? selectedFlow?.Nodes : [
     {
       id: "node-1",
       type: "startnode",
       position: { x: 0, y: 0 },
       data: { value: 123 },
-    },
+    }
   ];
+  const handleTextChange = (nodeId: string, text: string) => {
+    setNodes((prevNodes) => 
+      prevNodes.map((node) => 
+        node.id === nodeId 
+          ? { ...node, data: { ...node.data, text } }
+          : node
+      )
+    );
+  };
   
-  const initialEdges: Edge[] = [];
-  const [nodes, setNodes] = useState<Node[]>(selectedFlow?.Nodes);
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(selectedFlow?.edges);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
@@ -160,7 +168,6 @@ const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
             data: { value: 123 },
           };
           break;
-
         case "text":
           newNode = {
             id: `${nodeId++}`,
@@ -168,14 +175,10 @@ const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
             position,
             data: {
               text: "",
-              onChange: (text: string) => {
-                console.log(text);
-              },
+              onChange: (text: string) => handleTextChange(`${nodeId - 1}`, text),
             },
           };
           break;
-
-        // ... rest of your existing switch cases ...
         default:
           newNode = {
             id: `${nodeId++}`,
