@@ -32,17 +32,8 @@ import PaymentNode from "./CustomeNode/Input/PaymentInputNode";
 import FileInputNode from "./CustomeNode/Input/FileInputNode";
 import RatingInputNode from "./CustomeNode/Input/RatingNode";
 import URLInputNode from "./CustomeNode/Input/WebsiteUrlNode";
+import { useBotStore } from "../../../app/botStore"; 
 
-const initialNodes = [
-  {
-    id: "node-1",
-    type: "startnode",
-    position: { x: 0, y: 0 },
-    data: { value: 123 },
-  },
-];
-
-const initialEdges: Edge[] = [];
 
 interface FlowEditorProps {
   onSave: boolean;
@@ -52,12 +43,23 @@ interface FlowEditorProps {
 let nodeId = 3;
 
 const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const {selectedFlow} = useBotStore();
+  const initialNodes = [
+    {
+      id: "node-1",
+      type: "startnode",
+      position: { x: 0, y: 0 },
+      data: { value: 123 },
+    },
+  ];
+  
+  const initialEdges: Edge[] = [];
+  const [nodes, setNodes] = useState<Node[]>(selectedFlow?.Nodes);
+  const [edges, setEdges] = useState<Edge[]>(selectedFlow?.edges);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  
   // Save effect
   useEffect(() => {
     const saveFlow = async () => {

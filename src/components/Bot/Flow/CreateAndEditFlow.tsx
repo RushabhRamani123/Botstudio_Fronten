@@ -6,6 +6,8 @@ import { Card, CardContent } from "../../ui/card";
 import { Skeleton } from "../../ui/skeleton";
 import type { Node, Edge } from '@xyflow/react';
 import { toast } from '../../../hooks/use-toast';
+import useStore from '../../../app/chatStore';
+import { useBotStore } from '../../../app/botStore';
 
 // Lazy loaded components
 const Sidebar = lazy(() => import('./Sidebar'));
@@ -47,7 +49,8 @@ const CreateAndEditFlow: React.FC = () => {
   const [save, setSave] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-
+  const { selectedBot,selectedFlow
+    , updateFlowNodes } = useBotStore();
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -74,55 +77,9 @@ const CreateAndEditFlow: React.FC = () => {
     }
   };
   const handleFlowSave = async (flowData: FlowData) => {
-    if (!botId || !flowId) {
-      toast({
-        title: "Error",
-        description: "Missing bot or flow ID",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Convert the received flow data node to the expected format
-      const node = {
-        id: flowData.id || "3",
-        type: flowData.type || "text",
-        position: {
-          x: flowData.position?.x || -338.44928778714893,
-          y: flowData.position?.y || -410.51922253671137
-        },
-        data: {
-          text: flowData.data?.text || ""
-        },
-        measured: {
-          width: flowData.measured?.width || 217,
-          height: flowData.measured?.height || 74
-        },
-        selected: flowData.selected || false,
-        dragging: flowData.dragging || false
-      };
-
-      // Use updateFlowNodes from botStore to save the node
-      useBotStore.getState().updateFlowNodes(
-        botId,
-        flowId,
-        [node] // Pass as array since updateFlowNodes expects an array of nodes
-      );
-
-      console.log('Flow data saved successfully:', node);
-      toast({
-        title: "Success",
-        description: "Flow saved successfully"
-      });
-      
-    } catch (error) {
-      console.error('Error saving flow:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save flow data"
-      });
-    }
+    console.log(flowData);
+    console.log(selectedBot); 
+    updateFlowNodes(selectedBot.id,selectedFlow.id,flowData.nodes,flowData.edges); 
   };
 
   const handleNavigateBack = () => {

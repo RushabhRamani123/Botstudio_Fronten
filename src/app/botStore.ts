@@ -1,104 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-
-// Node Types
-interface FlowNode {
-  id: string;
-  type: string;
-  position: {
-    x: number;
-    y: number;
-  };
-  data: {
-    text: string;
-    // Add other data properties as needed
-  };
-  measured?: {
-    width: number;
-    height: number;
-  };
-  selected?: boolean;
-  dragging?: boolean;
-}
-
-interface Edge {
-  id: string;
-  source: string;
-  target: string;
-  type?: string;
-  animated?: boolean;
-}
-
-// Flow Types
-interface Flow {
-  id: string;
-  name: string;
-  triggers: string;
-  lastPublishedAt: string;
-  sessions: number;
-  completed: number;
-  dropped: number;
-  status: 'Draft' | 'Published' | 'Archived';
-  flowNodes?: FlowNode[];
-  edges?: Edge[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Bot Types
-interface Bot {
-  id: string;
-  name: string;
-  description?: string;
-  lastUpdated: string;
-  flows: number;
-  sessions: number;
-  dropped: number;
-  flowDetails: Flow[];
-  createdAt: string;
-  status: 'Active' | 'Inactive' | 'Archived';
-}
-
-// Store Interface
-interface BotStore {
-  // State
-  bots: Bot[];
-  selectedBot: Bot | null;
-  selectedFlow: Flow | null;
-  isModalOpen: boolean;
-  newBotName: string;
-  isLoading: boolean;
-  error: string | null;
-
-  // Bot Actions
-  setNewBotName: (name: string) => void;
-  openModal: () => void;
-  closeModal: () => void;
-  addBot: (name: string, description?: string) => void;
-  updateBot: (botId: string, updates: Partial<Bot>) => void;
-  deleteBot: (botId: string) => void;
-  selectBot: (id: string) => void;
-  
-  // Flow Actions
-  addFlow: (botId: string, flowName: string) => void;
-  updateFlow: (botId: string, flowId: string, updates: Partial<Flow>) => void;
-  deleteFlow: (botId: string, flowId: string) => void;
-  selectFlow: (botId: string, flowId: string) => void;
-  
-  // Flow Node Actions
-  updateFlowNodes: (botId: string, flowId: string, nodes: FlowNode[], edges?: Edge[]) => void;
-  
-  // Error Handling
-  setError: (error: string | null) => void;
-  clearError: () => void;
-}
-
-// Helper Functions
+import { Bot, BotStore, Flow } from './DTO';
 const getCurrentTimestamp = () => new Date().toISOString();
-
 const generateId = () => Math.random().toString(36).substr(2, 9);
-
-// Create Store
 export const useBotStore = create<BotStore>()(
   persist(
     (set) => ({
@@ -110,14 +14,13 @@ export const useBotStore = create<BotStore>()(
       newBotName: '',
       isLoading: false,
       error: null,
+      botId:null,
+      flowId:null,
 
       // Bot Actions
       setNewBotName: (name) => set({ newBotName: name }),
-      
       openModal: () => set({ isModalOpen: true }),
-      
       closeModal: () => set({ isModalOpen: false, newBotName: '' }),
-      
       addBot: (name, description = '') => set((state) => {
         const newBot: Bot = {
           id: generateId(),
@@ -131,14 +34,12 @@ export const useBotStore = create<BotStore>()(
           createdAt: getCurrentTimestamp(),
           status: 'Active'
         };
-        
         return {
           bots: [...state.bots, newBot],
           isModalOpen: false,
           newBotName: ''
         };
-      }),
-      
+      }),  
       updateBot: (botId, updates) => set((state) => ({
         bots: state.bots.map(bot => 
           bot.id === botId 
@@ -161,7 +62,7 @@ export const useBotStore = create<BotStore>()(
       
       selectBot: (id) => set((state) => ({
         selectedBot: state.bots.find(bot => bot.id === id) || null,
-        selectedFlow: null
+        selectedFlow: null,
       })),
 
       // Flow Actions
@@ -175,7 +76,7 @@ export const useBotStore = create<BotStore>()(
           completed: 0,
           dropped: 0,
           status: 'Draft',
-          flowNodes: [],
+          Nodes: [],
           edges: [],
           createdAt: getCurrentTimestamp(),
           updatedAt: getCurrentTimestamp()
@@ -251,9 +152,9 @@ export const useBotStore = create<BotStore>()(
       }),
       
       selectFlow: (botId, flowId) => set((state) => ({
-        selectedFlow: state.bots
-          .find(bot => bot.id === botId)
-          ?.flowDetails.find(flow => flow.id === flowId) || null
+        selectedFlow: state.bots.find(bot => bot.id === botId)?.flowDetails.find(flow => flow.id === flowId) || null,
+        botId:botId,
+        flowId:flowId
       })),
 
       // Flow Node Actions
@@ -264,7 +165,7 @@ export const useBotStore = create<BotStore>()(
               if (flow.id === flowId) {
                 return {
                   ...flow,
-                  flowNodes: nodes,
+                  Nodes: nodes,
                   edges: edges,
                   updatedAt: getCurrentTimestamp()
                 };
@@ -287,7 +188,7 @@ export const useBotStore = create<BotStore>()(
           selectedFlow: state.selectedFlow?.id === flowId 
             ? { 
                 ...state.selectedFlow, 
-                flowNodes: nodes, 
+                Nodes: nodes, 
                 edges: edges 
               } 
             : state.selectedFlow

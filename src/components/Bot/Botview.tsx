@@ -29,18 +29,22 @@ import {
 
 const BotDetailView = () => {
   // const { id } = useParams();
-  const { selectedBot, addFlow } = useBotStore();
+  const { selectedBot,selectFlow, addFlow } = useBotStore();
   const navigate = useNavigate();
   const [isAddFlowModalOpen, setIsAddFlowModalOpen] = useState(false);
   const [newFlowName, setNewFlowName] = useState("");
   if (!selectedBot) {
     return <div>Bot not found</div>;
   }
-  const handleRowClick = () => {
+  const handleRowClick = (id:string) => {
     navigate(`/bot/flow`);
+    selectFlow(selectedBot.id,id); 
+    
   };
   const handleAddFlow = () => {
     if (newFlowName.trim() !== "") {
+      console.log(selectedBot);
+      console.log(newFlowName);
       addFlow(selectedBot.id, newFlowName);
       setIsAddFlowModalOpen(false);
       setNewFlowName("");
@@ -92,7 +96,7 @@ const BotDetailView = () => {
             <TableBody>
               {selectedBot.flowDetails.map((flow) => (
                 <TableRow
-                  onClick={() => handleRowClick()}
+                  onClick={() => handleRowClick(flow.id)}
                   key={flow.id}
                   className="cursor-pointer"
                 >
