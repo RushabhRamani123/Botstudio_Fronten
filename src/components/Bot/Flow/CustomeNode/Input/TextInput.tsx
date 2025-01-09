@@ -38,11 +38,11 @@ const InputNode = ({ data, onVariableChange }) => {
   };
 
   return (
-    <div className="relative min-w-[250px] shadow-lg rounded-md border-2 border-blue-300 bg-white">
+    <div className="relative min-w-[250px] shadow-lg rounded-md border-2 border-yellow-300 bg-white">
       <Handle
         type="target"
         position={Position.Left}
-        className="w-3 h-3 !bg-blue-400"
+        className="w-3 h-3 !bg-yellow-400"
       />
       
       <div className="p-4">
@@ -61,7 +61,7 @@ const InputNode = ({ data, onVariableChange }) => {
             value={inputValue}
             onChange={handleInputChange}
             placeholder={settings.placeholder}
-            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[100px]"
+            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300 min-h-[100px]"
           />
         ) : (
           <input
@@ -69,12 +69,12 @@ const InputNode = ({ data, onVariableChange }) => {
             value={inputValue}
             onChange={handleInputChange}
             placeholder={settings.placeholder}
-            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
           />
         )}
 
         {settings.buttonLabel && (
-          <button className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition-colors">
+          <button className="mt-3 px-4 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 transition-colors">
             {settings.buttonLabel}
           </button>
         )}
@@ -89,7 +89,7 @@ const InputNode = ({ data, onVariableChange }) => {
       <Handle
         type="source"
         position={Position.Right}
-        className="w-3 h-3 !bg-blue-400"
+        className="w-3 h-3 !bg-yellow-400"
       />
 
       <Dialog open={open} onOpenChange={setOpen}>

@@ -37,8 +37,8 @@ const URLInputNode = ({ data, onVariableChange }) => {
   };
 
   return (
-    <div className="relative min-w-[250px] shadow-lg rounded-md border-2 border-blue-300 bg-white">
-      <Handle type="target" position={Position.Left} className="w-3 h-3 !bg-blue-400" />
+    <div className="relative min-w-[250px] shadow-lg rounded-md border-2 border-yellow-300 bg-white">
+      <Handle type="target" position={Position.Left} className="w-3 h-3 !bg-yellow-400" />
       
       <div className="p-4">
         <div className="flex justify-between items-center mb-3">
@@ -53,7 +53,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
           value={url}
           onChange={(e) => handleURLChange(e.target.value)}
           placeholder={settings.placeholder}
-          className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 ${
+          className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300 ${
             !isValid ? 'border-red-500' : ''
           }`}
         />
@@ -64,7 +64,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
 
         {settings.buttonLabel && (
           <button 
-            className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 disabled:opacity-50"
+            className="mt-3 px-4 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 disabled:opacity-50"
             disabled={!isValid || !url}
           >
             {settings.buttonLabel}
@@ -72,7 +72,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
         )}
       </div>
 
-      <Handle type="source" position={Position.Right} className="w-3 h-3 !bg-blue-400" />
+      <Handle type="source" position={Position.Right} className="w-3 h-3 !bg-yellow-400" />
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
