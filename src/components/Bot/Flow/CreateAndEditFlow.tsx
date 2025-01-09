@@ -5,6 +5,7 @@ import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
 import { Skeleton } from "../../ui/skeleton";
 import type { Node, Edge } from '@xyflow/react';
+import { toast } from '../../../hooks/use-toast';
 
 // Lazy loaded components
 const Sidebar = lazy(() => import('./Sidebar'));
@@ -53,7 +54,7 @@ const CreateAndEditFlow: React.FC = () => {
       setSave(prev => !prev);
       // Add a small delay to ensure the save state is properly toggled
       await new Promise(resolve => setTimeout(resolve, 100));
-      navigate(-1);
+      
     } catch (error) {
       console.error('Error triggering save:', error);
     } finally {
@@ -72,18 +73,55 @@ const CreateAndEditFlow: React.FC = () => {
       setIsExporting(false);
     }
   };
-
   const handleFlowSave = async (flowData: FlowData) => {
+    if (!botId || !flowId) {
+      toast({
+        title: "Error",
+        description: "Missing bot or flow ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      console.log('Saving flow data:', flowData);
-      // Add your API call or storage logic here
-      // Example:
-      // await saveFlowToAPI(flowData);
+      // Convert the received flow data node to the expected format
+      const node = {
+        id: flowData.id || "3",
+        type: flowData.type || "text",
+        position: {
+          x: flowData.position?.x || -338.44928778714893,
+          y: flowData.position?.y || -410.51922253671137
+        },
+        data: {
+          text: flowData.data?.text || ""
+        },
+        measured: {
+          width: flowData.measured?.width || 217,
+          height: flowData.measured?.height || 74
+        },
+        selected: flowData.selected || false,
+        dragging: flowData.dragging || false
+      };
+
+      // Use updateFlowNodes from botStore to save the node
+      useBotStore.getState().updateFlowNodes(
+        botId,
+        flowId,
+        [node] // Pass as array since updateFlowNodes expects an array of nodes
+      );
+
+      console.log('Flow data saved successfully:', node);
+      toast({
+        title: "Success",
+        description: "Flow saved successfully"
+      });
       
-      // Show success message or handle the saved state
     } catch (error) {
       console.error('Error saving flow:', error);
-      // Handle error state
+      toast({
+        title: "Error",
+        description: "Failed to save flow data"
+      });
     }
   };
 

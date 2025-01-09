@@ -974,9 +974,10 @@ export interface Chat {
   lastMessage?: LastMessage;
 }
 */
-const Chat = [
+// Extended chat data with diverse scenarios
+const initialChats: Chat[] = [
   {
-    id: "1",
+    id: 'chat1',
     name: "Sarah Johnson",
     message: "I need urgent assistance with my enterprise account setup",
     avatar: "SJ",
@@ -984,6 +985,8 @@ const Chat = [
     category: "vip",
     priority: "high",
     status: "active",
+    lastInteraction: '2025-01-09T09:45:00Z',
+    assignedTo: 'agent1',
     customerMetadata: {
       totalTickets: 12,
       memberSince: "2023-01-15",
@@ -992,136 +995,236 @@ const Chat = [
     lastMessage: {
       text: "I need urgent assistance with my enterprise account setup",
       sender: "user",
-      timestamp: "09:45",
+      timestamp: '2025-01-09T09:45:00Z',
       priority: "high",
       ticketId: "TK-1001",
-    },
+    }
   },
   {
-    id: "2",
+    id: 'chat2',
     name: "Team Discussion",
     message: "@alex Please review the customers integration request",
     avatar: "TD",
     unread: true,
     category: "internal",
+    status: 'active',
+    lastInteraction: '2025-01-09T10:15:00Z',
+    assignedTo: 'alex',
     lastMessage: {
       text: "@alex Please review the customers integration request",
       sender: "employee",
-      timestamp: "10:15",
+      timestamp: '2025-01-09T10:15:00Z',
       isNote: true,
       ticketId: "TK-1002",
-    },
+    }
   },
   {
-    id: "3",
+    id: 'chat3',
     name: "Michael Smith",
     message: "Bot: Escalating to human support - Complex integration question",
     avatar: "MS",
     status: "active",
     category: "regular",
+    lastInteraction: '2025-01-09T11:20:00Z',
     lastMessage: {
       text: "I need help with the API integration. The documentation is not clear about rate limits.",
       sender: "user",
-      timestamp: "11:20",
+      timestamp: '2025-01-09T11:20:00Z',
       ticketId: "TK-1003",
-    },
+    }
   },
   {
-    id: "4",
+    id: 'chat4',
     name: "Emma Davis",
-    message: "Awaiting customer response on proposed solution",
+    message: "Payment processing issue resolved",
     avatar: "ED",
-    status: "waiting",
-    lastMessage: {
-      text: "I ve shared the solution. Please let me know if this helps.",
-      sender: "employee",
-      timestamp: "14:30",
-      ticketId: "TK-1004",
-    },
-  },
-  {
-    id: "5",
-    name: "David Wilson",
-    message: "Interested in enterprise pricing for 500+ users",
-    avatar: "DW",
-    category: "new",
-    priority: "high",
-    lastMessage: {
-      text: "Could you provide details about enterprise pricing?",
-      sender: "user",
-      timestamp: "15:45",
-      ticketId: "TK-1005",
-    },
-  },
-  {
-    id: "6",
-    name: "Lisa Chen",
-    message: "Technical issue with dashboard loading",
-    avatar: "LC",
     category: "regular",
+    status: "resolved",
     priority: "medium",
-    lastMessage: {
-      text: "The dashboard is not loading after the latest update",
-      sender: "user",
-      timestamp: "16:00",
-      ticketId: "TK-1006",
+    lastInteraction: '2025-01-09T14:30:00Z',
+    assignedTo: 'agent2',
+    customerMetadata: {
+      totalTickets: 3,
+      memberSince: "2024-06-01",
+      previousInteractions: 8,
     },
+    lastMessage: {
+      text: "Thank you for your help! The payment went through successfully.",
+      sender: "user",
+      timestamp: '2025-01-09T14:30:00Z',
+      ticketId: "TK-1004",
+    }
   },
   {
-    id: "7",
-    name: "Global Corp Inc.",
-    message: "Service disruption affecting multiple users",
-    avatar: "GC",
+    id: 'chat5',
+    name: "Global Tech Solutions",
+    message: "System outage affecting multiple regions",
+    avatar: "GT",
+    unread: true,
     category: "vip",
     priority: "high",
     status: "active",
-    lastMessage: {
-      text: "Urgent: Multiple users reporting login failures",
-      sender: "user",
-      timestamp: "09:15",
-      ticketId: "TK-1007",
+    lastInteraction: '2025-01-09T15:00:00Z',
+    assignedTo: 'agent3',
+    customerMetadata: {
+      totalTickets: 25,
+      memberSince: "2023-03-15",
+      previousInteractions: 89,
     },
+    lastMessage: {
+      text: "Urgent: Multiple regions reporting service disruption",
+      sender: "user",
+      timestamp: '2025-01-09T15:00:00Z',
+      priority: "high",
+      ticketId: "TK-1005",
+    }
+  }
+];
+
+// Extended message data with diverse interaction patterns
+  const initialMessages: Message[] = [
+  // Messages for Sarah Johnson (chat1)
+  {
+    id: 'msg1',
+    chatId:'chat1',
+    text: "I need urgent assistance with my enterprise account setup",
+    sender: "user",
+    timestamp: '2025-01-09T09:45:00Z',
+    ticketId: "TK-1001",
+    priority: "high",
+    status: "active"
   },
   {
-    id: "8",
-    name: "Robert Brown",
-    message: "Issue resolved: Account access restored",
-    avatar: "RB",
-    status: "resolved",
-    lastMessage: {
-      text: "Thank you for your help! Everything is working now.",
-      sender: "user",
-      timestamp: "17:30",
-      ticketId: "TK-1008",
-    },
+    id: 'msg2',
+    chatId:'chat1',
+    text: "I understand this is urgent. I'll help you right away with your enterprise account setup.",
+    sender: "employee",
+    timestamp: '2025-01-09T09:46:00Z',
+    ticketId: "TK-1001"
   },
   {
-    id: "9",
-    name: "Anna White",
-    message: "Still investigating payment processing delay",
-    avatar: "AW",
-    status: "active",
+    id: 'msg3',
+    chatId:'chat1',
+    text: "VIP customer - ensure immediate resolution",
+    sender: "employee",
+    timestamp: '2025-01-09T09:46:30Z',
+    isNote: true,
+    ticketId: "TK-1001"
+  },
+
+  // Messages for Team Discussion (chat2)
+  {
+    id: 'msg4',
+    chatId:'chat2',
+    text: "@alex Please review the customers integration request",
+    sender: "employee",
+    timestamp: '2025-01-09T10:15:00Z',
+    ticketId: "TK-1002",
+    isNote: true
+  },
+  {
+    id: 'msg5',
+    chatId:'chat2',
+    text: "Customer requires custom API endpoints for their use case",
+    sender: "employee",
+    timestamp: '2025-01-09T10:16:00Z',
+    ticketId: "TK-1002",
+    isNote: true
+  },
+  {
+    id: 'msg6',
+    chatId:'chat2',
+    text: "@sarah I'll review and provide feedback within the next hour",
+    sender: "employee",
+    timestamp: '2025-01-09T10:17:00Z',
+    ticketId: "TK-1002",
+    isNote: true
+  },
+
+  // Messages for Michael Smith (chat3)
+  {
+    id: 'msg7',
+    chatId:'chat3',
+    text: "I need help with the API integration. The documentation is not clear about rate limits.",
+    sender: "user",
+    timestamp: '2025-01-09T11:20:00Z',
+    ticketId: "TK-1003",
+    status: "active"
+  },
+  {
+    id: 'msg8',
+    chatId:'chat3',
+    text: "Let me analyze your integration question and provide detailed guidance.",
+    sender: "bot",
+    timestamp: '2025-01-09T11:21:00Z',
+    ticketId: "TK-1003"
+  },
+  {
+    id: 'msg9',
+    chatId:'chat3',
+    text: "Escalating to human support due to complexity of integration requirements",
+    sender: "bot",
+    timestamp: '2025-01-09T11:22:00Z',
+    ticketId: "TK-1003"
+  },
+
+  // Messages for Emma Davis (chat4)
+  {
+    id: 'msg10',
+    chatId:'chat4',
+    text: "I'm having issues processing a payment through the platform",
+    sender: "user",
+    timestamp: '2025-01-09T14:15:00Z',
+    ticketId: "TK-1004",
     priority: "medium",
-    lastMessage: {
-      text: "Our team is still investigating the cause of the delay",
-      sender: "employee",
-      timestamp: "13:20",
-      ticketId: "TK-1009",
-    },
+    status: "active"
   },
   {
-    id: "10",
-    name: "Tech Solutions Ltd",
-    message: "Implementation completed successfully",
-    avatar: "TS",
-    status: "archived",
-    lastMessage: {
-      text: "Project implementation completed. Closing ticket.",
-      sender: "employee",
-      timestamp: "18:00",
-      ticketId: "TK-1010",
-    },
+    id: 'msg11',
+    chatId:'chat4',
+    text: "Let me check the payment gateway logs for any issues.",
+    sender: "employee",
+    timestamp: '2025-01-09T14:20:00Z',
+    ticketId: "TK-1004"
   },
+  {
+    id: 'msg12',
+    chatId:'chat4',
+    text: "Thank you for your help! The payment went through successfully.",
+    sender: "user",
+    timestamp: '2025-01-09T14:30:00Z',
+    ticketId: "TK-1004",
+    status: "resolved"
+  },
+
+  // Messages for Global Tech Solutions (chat5)
+  {
+    id: 'msg13',
+    chatId:'chat5',
+    text: "Urgent: Multiple regions reporting service disruption",
+    sender: "user",
+    timestamp: '2025-01-09T15:00:00Z',
+    ticketId: "TK-1005",
+    priority: "high",
+    status: "active"
+  },
+  {
+    id: 'msg14',
+    chatId:'chat5',
+    text: "Investigating the outage - initial assessment shows network connectivity issues",
+    sender: "employee",
+    timestamp: '2025-01-09T15:02:00Z',
+    ticketId: "TK-1005"
+  },
+  {
+    id: 'msg15',
+    chatId:'chat5',
+    text: "Engaging infrastructure team for immediate response",
+    sender: "employee",
+    timestamp: '2025-01-09T15:03:00Z',
+    ticketId: "TK-1005",
+    isNote: true
+  }
 ];
 const conversationCategories: CategorySection[] = [
   {
@@ -1310,7 +1413,8 @@ export {
   conversations,
   navItems,
   Chats,
-  Chat,
+  initialChats, 
+  initialMessages ,
   nodeCategories,
   countryCodes,
   nodeTypes,

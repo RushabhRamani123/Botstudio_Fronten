@@ -1,69 +1,43 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Chat } from '../data';
-export interface CustomerMetadata {
-  totalTickets: number;
-  memberSince: string;
-  previousInteractions: number;
-}
-export interface LastMessage {
-  text: string;
-  sender: 'user' | 'employee' | 'bot';
-  timestamp: string;
-  isNote?: boolean;
-  ticketId?: string;
-  priority?: 'high' | 'medium' | 'low';
-}
-export interface Chat {
-  id: string;
-  name: string;
-  message: string;
-  avatar: string;
-  unread?: boolean;
-  category?: 'vip' | 'regular' | 'new' | 'returning' | 'internal';
-  status?: 'active' | 'waiting' | 'resolved' | 'archived';
-  priority?: 'high' | 'medium' | 'low';
-  lastInteraction?: string;
-  assignedTo?: string;
-  customerMetadata?: CustomerMetadata;
-  lastMessage?: LastMessage;
-}
-export interface Message {
-  id:string; 
-  chatId:string;
-  text?: string;
-  GIFlink?: string;
-  ImageLink?: string;
-  sender: 'user' | 'employee' | 'bot';
-  timestamp: string;
-  isNote?: boolean;
-  dateSeparator?: string;
-  priority?: 'high' | 'medium' | 'low';
-  status?: 'active' | 'waiting' | 'resolved' | 'archived';
-  ticketId?: string;
-}
-interface ChatStore {
-  chats: Chat[];
-  selectedChatId: string | null;
-  messages: Message[];
-  setSelectedChatId: (id: string) => void;
-  addMessage: (message: Message) => void;
-  getFilteredChats: (filter?: ChatFilter) => Chat[];
-}
-export interface ChatFilter {
-  type: 'quick-access' | 'active'  | 'status';
-  subtype?: string;
-}
-// Initialize with empty array instead of Chat import
-const initialChats: Chat[] = [];
+import { ChatFilter, ChatStore } from './DTO';
+import { Message } from 'react-hook-form';
+
+
 const useStore = create<ChatStore>()(
   persist(
     (set, get) => ({
       messages: [],
-      chats: initialChats,
-      selectedChatId:null,
+      chats: [],
+      selectedChatId: null,
+      selectedMessageId: null,
 
-      setSelectedChatId: (id) => set({ selectedChatId: id }),
+      setSelectedChat: (chatId) => {
+        const chat = get().chats.find(chat => chat.id === chatId);
+        if (!chat) {
+          console.warn(`Chat with id ${chatId} does not exist`);
+          return;
+        }
+        set({ 
+          selectedChatId: chatId,
+          selectedMessageId: chat.messageId 
+        });
+        console.log(chat); 
+        get().markChatAsRead(chatId);
+      },
+
+      clearSelectedChat: () => set({ 
+        selectedChatId: null,
+        selectedMessageId: null 
+      }),
+
+      getSelectedChatMessages: () => {
+        const state = get();
+        if (!state.selectedChatId) return [];
+        return state.messages
+          .filter(message => message.ticketId === state.selectedChatId)
+          .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      },
 
       addMessage: (message) => set((state) => {
         const newMessages = [...state.messages, message];
@@ -71,6 +45,7 @@ const useStore = create<ChatStore>()(
           if (chat.id === state.selectedChatId) {
             return {
               ...chat,
+              messageId: message.id,
               message: message.text || '',
               lastMessage: {
                 text: message.text || '',
@@ -81,11 +56,16 @@ const useStore = create<ChatStore>()(
                 ticketId: message.ticketId
               },
               status: message.status || chat.status,
-              priority: message.priority || chat.priority
+              priority: message.priority || chat.priority,
+              unread: message.sender !== 'employee'
             };
           }
           return chat;
         });
+
+        if (state.selectedChatId === message.ticketId) {
+          set({ selectedMessageId: message.id });
+        }
 
         return {
           messages: newMessages,
@@ -93,14 +73,30 @@ const useStore = create<ChatStore>()(
         };
       }),
 
+      updateMessageStatus: (messageId: string, status: Message['status']) => 
+        set((state) => ({
+          messages: state.messages.map(message =>
+            message.id === messageId ? { ...message, status } : message
+          )
+        })),
+
+      markChatAsRead: (chatId: string) => 
+        set((state) => ({
+          chats: state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, unread: false } : chat
+          )
+        })),
+
       getFilteredChats: (filter?: ChatFilter) => {
         const state = get();
         const now = new Date();
 
-        switch (filter?.type) {
+        if (!filter) return state.chats;
+
+        switch (filter.type) {
           case 'quick-access':
             return state.chats.filter(chat => {
-              switch (filter?.subtype) {
+              switch (filter.subtype) {
                 case 'you':
                   return chat.assignedTo === 'currentUser';
                 case 'mentions':
@@ -131,8 +127,6 @@ const useStore = create<ChatStore>()(
               }
             });
 
-         
-
           case 'status':
             return state.chats.filter(chat => {
               switch (filter.subtype) {
@@ -146,11 +140,12 @@ const useStore = create<ChatStore>()(
           default:
             return state.chats;
         }
-      }
+      },
     }),
     {
       name: 'chat-store'
     }
   )
 );
+
 export default useStore;

@@ -27,7 +27,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   // This is for the GIF Link 
     if (GIFlink) {
       return (
-        <div className="relative">
+        <div className="relative ">
           <img 
             src={GIFlink}
             alt="GIF message"
