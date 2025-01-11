@@ -40,8 +40,8 @@ const FlowEditorSkeleton = () => (
 );
 
 interface FlowData {
-  nodes: Node[];
-  edges: Edge[];
+  nodes?: Node[];
+  edges?: Edge[];
 }
 
 const CreateAndEditFlow: React.FC = () => {
@@ -77,8 +77,6 @@ const CreateAndEditFlow: React.FC = () => {
     }
   };
   const handleFlowSave = async (flowData: FlowData) => {
-    console.log(flowData);
-    console.log(selectedBot); 
     updateFlowNodes(selectedBot.id,selectedFlow.id,flowData.nodes,flowData.edges); 
   };
 

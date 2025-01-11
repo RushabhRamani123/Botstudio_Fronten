@@ -5,8 +5,8 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
 import {
   Table,
   TableBody,
@@ -14,32 +14,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "../ui/table";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { ChevronLeft, Info, PlusCircle, MoreVertical } from "lucide-react";
 import { useBotStore } from "../../app/botStore";
-import { Input } from "@/components/ui/input";
+import { Input } from "../ui/input";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "../ui/dialog";
 
 const BotDetailView = () => {
   // const { id } = useParams();
-  const { selectedBot,selectFlow, addFlow } = useBotStore();
+  const { selectedBot, selectFlow, addFlow } = useBotStore();
   const navigate = useNavigate();
   const [isAddFlowModalOpen, setIsAddFlowModalOpen] = useState(false);
   const [newFlowName, setNewFlowName] = useState("");
   if (!selectedBot) {
     return <div>Bot not found</div>;
   }
-  const handleRowClick = (id:string) => {
+  const handleRowClick = (id: string) => {
     navigate(`/bot/flow`);
-    selectFlow(selectedBot.id,id); 
-    
+    selectFlow(selectedBot.id, id);
   };
   const handleAddFlow = () => {
     if (newFlowName.trim() !== "") {

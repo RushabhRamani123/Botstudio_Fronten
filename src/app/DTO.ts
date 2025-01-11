@@ -61,7 +61,7 @@ export interface ChatStore {
   markChatAsRead: (chatId: string) => void;
 }
 
-export interface FlowNode {
+export interface Node {
   id: string;
   type: string;
   position: {
@@ -119,21 +119,38 @@ export interface Bot {
 }
 
 // Store Interface
+export interface Template {
+  id: string;
+  name: string;
+  createdAt: Date;
+  modifiedAt?: Date;
+}
+export interface BotTemplateTableProps {
+  templates: [];
+  onTemplateClick: (id: string) => void;
+}
 export interface BotStore {
   // State
+  botTemplates:[];
+  selectedTemplate: Template | null ,
   bots: Bot[];
   selectedBot: Bot | null;
   selectedFlow: Flow | null;
   isModalOpen: boolean;
+  isTemplateModalOpen:boolean; 
+  newTemplateName:string;
   newBotName: string;
   isLoading: boolean;
   error: string | null;
-
   // Bot Actions
+  setNewTemplateName: (name: string)=>void;
   setNewBotName: (name: string) => void;
   openModal: () => void;
   closeModal: () => void;
+  openTemplateModal: () => void;
+  closeTemplateModal: () => void;
   addBot: (name: string, description?: string) => void;
+  addTemplate: (name: string) => void;
   updateBot: (botId: string, updates: Partial<Bot>) => void;
   deleteBot: (botId: string) => void;
   selectBot: (id: string) => void;
@@ -148,7 +165,7 @@ export interface BotStore {
   updateFlowNodes: (
     botId: string,
     flowId: string,
-    nodes: FlowNode[],
+    nodes: Node[],
     edges?: Edge[]
   ) => void;
 
@@ -156,3 +173,5 @@ export interface BotStore {
   setError: (error: string | null) => void;
   clearError: () => void;
 }
+
+

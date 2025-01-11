@@ -1409,6 +1409,40 @@ const nodeCategories: NodeCategory[] = [
   //   ],
   // },
 ];
+const templateSettings = {
+  'light': {
+    template: 'typebot-light',
+    background: { type: 'color', value: '#ffffff' }
+  },
+  'dark': {
+    template: 'typebot-dark',
+    background: { type: 'color', value: '#1f2937' }
+  },
+  'minimalist': {
+    template: 'minimalist-black',
+    background: { type: 'color', value: '#000000' }
+  },
+  'teal': {
+    template: 'minimalist-teal',
+    background: { type: 'color', value: '#14b8a6' }
+  },
+  'rain': {
+    template: 'bright-rain',
+    background: { type: 'gradient', value: 'from-purple-500 to-pink-500' }
+  },
+  'rays': {
+    template: 'ray-of-lights',
+    background: { type: 'gradient', value: 'from-blue-500 to-indigo-500' }
+  },
+  'aqua': {
+    template: 'aqua-glass',
+    background: { type: 'gradient', value: 'from-cyan-200 to-blue-500' }
+  },
+  'pi': {
+    template: 'pi',
+    background: { type: 'color', value: '#fefce8' }
+  }
+};
 export {
   conversations,
   navItems,
@@ -1419,6 +1453,7 @@ export {
   countryCodes,
   nodeTypes,
   Operations,
+  templateSettings,
   ASKQUESTION,
   stepColor,
   conversationCategories,

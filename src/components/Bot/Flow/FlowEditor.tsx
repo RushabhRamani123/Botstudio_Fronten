@@ -44,17 +44,10 @@ let nodeId = 3;
 
 const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
   const {selectedFlow} = useBotStore();
-  const initialNodes = selectedFlow?.Nodes ? selectedFlow?.Nodes : [
-  {
-    id: "node-1",
-    type: "startnode",
-    position: { x: 0, y: 0 },
-    data: { value: 123 },
-  }
-];
+  const initialNodes = selectedFlow?.Nodes
 
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(selectedFlow?.edges);
+  const [nodes, setNodes] = useState<Node[]|undefined>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]|undefined>(selectedFlow?.edges);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
