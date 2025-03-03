@@ -1,10 +1,8 @@
 import { Layout, Mail } from 'lucide-react'
-import React from 'react'
-
 function Header({templateType,handleTemplateTypeChange,handleSave}) {
   return (
     <div>
-              <header className="border-b-2 border-blue-300 bg-white">
+        <header className="border-b-2 border-blue-300 bg-white">
         <div className="flex h-16 items-center px-4 justify-between">
           <h2 className="text-lg font-semibold">Template Builder</h2>
           <div className="flex gap-4">
@@ -46,5 +44,4 @@ function Header({templateType,handleTemplateTypeChange,handleSave}) {
     </div>
   )
 }
-
-export default Header
+export default Header;

@@ -41,5 +41,4 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     </div>
   );
 };
-
 export default ChatHeader;

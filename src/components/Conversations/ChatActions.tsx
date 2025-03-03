@@ -11,7 +11,6 @@ interface ChatActionsProps {
   isReplyActive: boolean;
   handleEmojiSelect: (emoji: string) => void;
 }
-
 const ChatActions: React.FC<ChatActionsProps> = ({
   handleNoteClick,
   handleReplyClick,
@@ -32,7 +31,6 @@ const ChatActions: React.FC<ChatActionsProps> = ({
           className="hover:bg-gray-200"
           onClick={handleClick}
         >
-          {/* <LayoutDashboard className="h-4 w-4" /> */}
           <Gif size={32} />
         </Button>
         <Button variant="ghost" size="sm" className="hover:bg-gray-200">
@@ -68,5 +66,4 @@ const ChatActions: React.FC<ChatActionsProps> = ({
     </div>
   );
 };
-
 export default ChatActions;

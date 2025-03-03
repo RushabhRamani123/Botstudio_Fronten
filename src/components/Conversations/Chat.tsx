@@ -49,7 +49,7 @@ const Chat: React.FC = () => {
   const [Emoji, setEmoji] = useState<string>("");
   const { messages, addMessage, selectedChatId, chats } = useStore();
   const selectedChat = chats.find((chat) => chat.id === selectedChatId);
-
+  const [isBothandle,setisBothandle] = useState(false); 
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const scrollbarsRef = useRef<Scrollbars>(null);
   const { gifVissible } = useGifStore();
@@ -261,7 +261,7 @@ const Chat: React.FC = () => {
         </div>
 
         {/* CHAT FOOTER */}
-        <div className="bg-white p-4 border-t-2 border-blue-300 ">
+        {!isBothandle?<div className="bg-white p-4 border-t-2 border-blue-300 ">
           <ChatInput
             Emoji={Emoji}
             setEmoji={setEmoji}
@@ -276,9 +276,8 @@ const Chat: React.FC = () => {
             handleEmojiSelect={handleEmojiSelect}
           />
           <div>{gifVissible && <Giphy />}</div>
-        </div>
+        </div>:""}
       </div>
-
       <UserProfile
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
@@ -288,5 +287,4 @@ const Chat: React.FC = () => {
     </div>
   );
 };
-
 export default Chat;

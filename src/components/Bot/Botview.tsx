@@ -52,7 +52,7 @@ const BotDetailView = () => {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex items-center mb-6">
-        <Link to="/" className="mr-4">
+        <Link to="/bot" className="mr-4">
           <ChevronLeft className="h-6 w-6" />
         </Link>
         <h1 className="text-2xl font-bold">{selectedBot.name}</h1>

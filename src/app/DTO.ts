@@ -3,7 +3,6 @@ export interface CustomerMetadata {
   memberSince: string;
   previousInteractions: number;
 }
-
 export interface LastMessage {
   text: string;
   sender: "user" | "employee" | "bot";
@@ -12,7 +11,6 @@ export interface LastMessage {
   ticketId?: string;
   priority?: "high" | "medium" | "low";
 }
-
 export interface Chat {
   id: string;
   name: string;
@@ -27,7 +25,6 @@ export interface Chat {
   customerMetadata?: CustomerMetadata;
   lastMessage?: LastMessage;
 }
-
 export interface Message {
   id: string;
   chatId: string;
@@ -42,7 +39,6 @@ export interface Message {
   status?: "active" | "waiting" | "resolved" | "archived";
   ticketId?: string;
 }
-
 export interface ChatFilter {
   type: "quick-access" | "active" | "status";
   subtype?: string;
@@ -60,7 +56,6 @@ export interface ChatStore {
   updateMessageStatus: (messageId: string, status: Message["status"]) => void;
   markChatAsRead: (chatId: string) => void;
 }
-
 export interface Node {
   id: string;
   type: string;
@@ -79,7 +74,6 @@ export interface Node {
   selected?: boolean;
   dragging?: boolean;
 }
-
 export interface Edge {
   id: string;
   source: string;
@@ -87,7 +81,6 @@ export interface Edge {
   type?: string;
   animated?: boolean;
 }
-
 // Flow Types
 export interface Flow {
   id: string;
@@ -103,7 +96,6 @@ export interface Flow {
   createdAt: string;
   updatedAt: string;
 }
-
 // Bot Types
 export interface Bot {
   id: string;
@@ -117,7 +109,6 @@ export interface Bot {
   createdAt: string;
   status: "Active" | "Inactive" | "Archived";
 }
-
 // Store Interface
 export interface Template {
   id: string;
@@ -173,5 +164,3 @@ export interface BotStore {
   setError: (error: string | null) => void;
   clearError: () => void;
 }
-
-

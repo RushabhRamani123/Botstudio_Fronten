@@ -10,7 +10,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
   handleSendMessage,
 }) => {
   const [message, setMessage] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sendMessage = () => {
     if (message.trim()) {
       handleSendMessage(message);

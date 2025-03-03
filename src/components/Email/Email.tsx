@@ -10,7 +10,7 @@ const ContactEmailPage = () => {
     { id: 4, name: 'Sarah Wilson', email: 'sarah@example.com', role: 'Product Owner', avatar: null },
     { id: 5, name: 'Alex Brown', email: 'alex@example.com', role: 'Developer', avatar: null },
   ]);
-
+  
   const [emailTemplates] = useState([
     {
       id: 1,
@@ -38,6 +38,25 @@ const ContactEmailPage = () => {
     contact.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const allFilteredSelected = filteredContacts.every(contact => 
+    selectedContacts.some(c => c.id === contact.id)
+  );
+
+  const handleSelectAll = () => {
+    if (allFilteredSelected) {
+      setSelectedContacts(prev => 
+        prev.filter(contact => 
+          !filteredContacts.some(fc => fc.id === contact.id)
+        )
+      );
+    } else {
+      const newContacts = filteredContacts.filter(contact => 
+        !selectedContacts.some(c => c.id === contact.id)
+      );
+      setSelectedContacts(prev => [...prev, ...newContacts]);
+    }
+  };
+
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
     setEmailSubject(template.subject);
@@ -51,15 +70,18 @@ const ContactEmailPage = () => {
         : [...prev, contact]
     );
   };
+
   const removeContact = (contactToRemove) => {
     setSelectedContacts(prev => prev.filter(contact => contact.id !== contactToRemove.id));
   };
+
   const handleSendEmail = () => {
     console.log('Sending email to:', selectedContacts);
     console.log('Subject:', emailSubject);
     console.log('Body:', emailBody);
     alert('Email sent successfully!');
   };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="container mx-auto max-w-6xl">
@@ -69,7 +91,15 @@ const ContactEmailPage = () => {
           {/* Contact List */}
           <Card className="shadow-lg">
             <CardHeader className="border-b bg-gray-50">
-              <CardTitle className="text-lg font-semibold">Select Recipients</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">Select Recipients</CardTitle>
+                <button
+                  onClick={handleSelectAll}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  {allFilteredSelected ? 'Deselect All' : 'Select All'}
+                </button>
+              </div>
               <div className="relative mt-2">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <input
@@ -112,6 +142,7 @@ const ContactEmailPage = () => {
               </div>
             </CardContent>
           </Card>
+
           {/* Email Composition */}
           <Card className="shadow-lg">
             <CardHeader className="border-b bg-gray-50">
@@ -136,6 +167,7 @@ const ContactEmailPage = () => {
                   <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>
+
               {/* Recipients */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Recipients</label>
@@ -165,6 +197,7 @@ const ContactEmailPage = () => {
                   )}
                 </div>
               </div>
+
               {/* Subject */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
@@ -176,6 +209,7 @@ const ContactEmailPage = () => {
                   className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
+
               {/* Email Body */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
@@ -187,6 +221,7 @@ const ContactEmailPage = () => {
                   placeholder="Write your message here..."
                 />
               </div>
+
               {/* Send Button */}
               <button
                 onClick={handleSendEmail}
@@ -203,4 +238,5 @@ const ContactEmailPage = () => {
     </div>
   );
 };
+
 export default ContactEmailPage;

@@ -13,7 +13,8 @@ import TemplateManagement from "./Template";
 import ContactEmailPage from "./Email/Email";
 import MultiTemplateBuilder from "./Template/TemplateBuilder";
 import ThemeCustomizer from "./Bot/TemplateTheme";
-const Home = () => <div className="p-6">Home Dashboard</div>;
+import { Dashboard } from "./Dashboard/Home";
+import Settings from "./Settings/settings";
 function Sidebar() {
   const navRef = useRef(null);
   const { activeTab, isExpanded, setActiveTab, toggleNavbar } = useNavbarStore();
@@ -146,7 +147,7 @@ function Navbar() {
       >
         <main>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/bot" element={<BotWithStyles />} />
             <Route path='/bot/:id' element={<BotDetailView /> }/>
@@ -155,6 +156,8 @@ function Navbar() {
             <Route path="/template" element={<TemplateManagement />}/>
             <Route path="/mail" element={<ContactEmailPage />}/>
             <Route path="/bot/template/:templateId" element={<ThemeCustomizer />}/>
+            <Route path="/settings" element={<Settings />}/>
+            <Route path="" element={''}/> 
           </Routes>
         </main>
       </ScrollArea>

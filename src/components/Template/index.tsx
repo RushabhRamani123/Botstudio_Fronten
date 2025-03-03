@@ -20,6 +20,24 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 
+// Reusable Tag Component
+const Tag = ({ category }) => {
+  const colorMap = {
+    Email: 'bg-blue-100 text-blue-800',
+    Documentation: 'bg-green-100 text-green-800',
+    Business: 'bg-purple-100 text-purple-800',
+    // Add more categories and colors as needed
+  };
+
+  const colorClass = colorMap[category] || 'bg-gray-100 text-gray-800'; // Default color for unknown categories
+
+  return (
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+      {category}
+    </span>
+  );
+};
+
 function TemplateManagement() {
   const [templates, setTemplates] = useState([
     { id: 1, title: 'Welcome Email', category: 'Email', lastModified: '2024-01-05' },
@@ -83,40 +101,40 @@ function TemplateManagement() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header Section */}
-      <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Templates</h1>
+      <div className="mb-6 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-gray-800">Templates</h1>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 transition-colors text-sm"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-4 w-4" />
           Create Template
         </button>
       </div>
 
       {/* Search and Filter Section */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
+      <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <input
             type="text"
             placeholder="Search templates..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-3 py-1.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
         </div>
       </div>
 
       {/* Templates Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <Table>
+        <Table className="text-sm">
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[40%]">Title</TableHead>
-              <TableHead className="w-[25%]">Category</TableHead>
-              <TableHead className="w-[25%]">Last Modified</TableHead>
-              <TableHead className="w-[10%]">Actions</TableHead>
+            <TableRow className="">
+              <TableHead className="px-4 py-2">Title</TableHead>
+              <TableHead className="px-4 py-2">Category</TableHead>
+              <TableHead className="px-4 py-2">Last Modified</TableHead>
+              <TableHead className="px-4 py-2">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -124,24 +142,26 @@ function TemplateManagement() {
               <TableRow
                 key={template.id}
                 onClick={() => handleRowClick(template.id)}
-                className="cursor-pointer hover:bg-gray-50"
+                className="hover:bg-gray-50 transition-colors"
               >
-                <TableCell className="font-medium">{template.title}</TableCell>
-                <TableCell>{template.category}</TableCell>
-                <TableCell>{template.lastModified}</TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-2 font-medium">{template.title}</TableCell>
+                <TableCell className="px-4 py-2">
+                  <Tag category={template.category} />
+                </TableCell>
+                <TableCell className="px-4 py-2">{template.lastModified}</TableCell>
+                <TableCell className="px-4 py-2">
                   <div className="flex gap-2">
                     <button
                       className="text-gray-400 hover:text-blue-600"
                       onClick={(e) => handleEdit(e, template)}
                     >
-                      <Edit className="h-5 w-5" />
+                      <Edit className="h-4 w-4" />
                     </button>
                     <button
                       className="text-gray-400 hover:text-red-600"
                       onClick={(e) => handleDelete(e, template)}
                     >
-                      <Trash2 className="h-5 w-5" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </TableCell>
@@ -152,9 +172,9 @@ function TemplateManagement() {
 
         {/* Empty State */}
         {filteredTemplates.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No templates found</p>
-            <p className="text-gray-400 text-sm mt-1">
+          <div className="text-center py-6">
+            <p className="text-gray-500 text-sm">No templates found</p>
+            <p className="text-gray-400 text-xs mt-1">
               {searchTerm ? "Try adjusting your search" : "Create your first template to get started"}
             </p>
           </div>
