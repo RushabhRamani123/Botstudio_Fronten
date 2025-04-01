@@ -3,8 +3,8 @@ import { Settings } from 'lucide-react';
 import { TemplateCard } from './TemplateCard';
 import { templateSettings } from '../../data';
 
-// Move templateSettings outside the component
-
+// Define a type for the template keys
+type TemplateType = 'light' | 'dark' | 'minimalist' | 'teal' | 'rain' | 'rays' | 'aqua' | 'pi';
 
 const ThemeCustomizer = () => {
   const [settings, setSettings] = useState({
@@ -20,10 +20,10 @@ const ThemeCustomizer = () => {
     }
   });
 
-  const handleTemplateChange = (templateType) => {
+  const handleTemplateChange = (templateType: TemplateType) => {
     setSettings(prev => ({
       ...prev,
-      ...templateSettings[templateType]
+      ...templateSettings[templateType] // This will now have proper type checking
     }));
   };
 
@@ -54,8 +54,8 @@ const ThemeCustomizer = () => {
                   key={template.type}
                   name={template.name}
                   type={template.type}
-                  isSelected={settings.template === templateSettings[template.type].template}
-                  onClick={() => handleTemplateChange(template.type)}
+                  isSelected={settings.template === templateSettings[template.type as TemplateType].template}
+                  onClick={() => handleTemplateChange(template.type as TemplateType)}
                 />
               ))}
             </div>
@@ -171,7 +171,5 @@ const ThemeCustomizer = () => {
     </div>
   );
 };
-
-
 
 export default ThemeCustomizer;

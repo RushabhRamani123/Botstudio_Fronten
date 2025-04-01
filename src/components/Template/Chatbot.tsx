@@ -1,5 +1,30 @@
-import { MessageSquare, Send } from 'lucide-react'
-function Chatbot({handleSendMessage,chatOpen, setChatOpen,messages,setMessages,newMessage, setNewMessage}) {
+import React from 'react';
+import { MessageSquare, Send } from 'lucide-react';
+
+// Define types for the message
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+// Define props type for the Chatbot component
+interface ChatbotProps {
+  handleSendMessage: () => void;
+  chatOpen: boolean;
+  setChatOpen: (open: boolean) => void;
+  messages: Message[];
+  newMessage: string;
+  setNewMessage: (message: string) => void;
+}
+
+const Chatbot: React.FC<ChatbotProps> = ({
+  handleSendMessage,
+  chatOpen, 
+  setChatOpen,
+  messages,
+  newMessage, 
+  setNewMessage
+}) => {
   return (
     <div>
         <div
@@ -54,8 +79,8 @@ function Chatbot({handleSendMessage,chatOpen, setChatOpen,messages,setMessages,n
                   <input
                     type="text"
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewMessage(e.target.value)}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleSendMessage()}
                     placeholder="Type your message..."
                     className="flex-1 p-2 border rounded-md"
                   />
@@ -71,7 +96,7 @@ function Chatbot({handleSendMessage,chatOpen, setChatOpen,messages,setMessages,n
           )}
         </div>
     </div>
-  )
+  );
 }
 
-export default Chatbot
+export default Chatbot;

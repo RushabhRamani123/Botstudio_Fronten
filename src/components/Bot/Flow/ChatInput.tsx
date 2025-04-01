@@ -1,5 +1,4 @@
 import { Send } from 'lucide-react';
-
 interface ChatInputProps {
   inputMessage: string;
   setInputMessage: (message: string) => void;
@@ -43,5 +42,3 @@ export const ChatInput = ({
     </div>
   </form>
 );
-
-// FlowControls.tsx

@@ -1,5 +1,21 @@
-import { Layout, Mail } from 'lucide-react'
-function Header({templateType,handleTemplateTypeChange,handleSave}) {
+import React from 'react';
+import { Layout, Mail } from 'lucide-react';
+
+// Define the type for template types
+type TemplateType = 'email' | 'marketing';
+
+// Define the props interface
+interface HeaderProps {
+  templateType: TemplateType;
+  handleTemplateTypeChange: (type: TemplateType) => void;
+  handleSave: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ 
+  templateType, 
+  handleTemplateTypeChange, 
+  handleSave 
+}) => {
   return (
     <div>
         <header className="border-b-2 border-blue-300 bg-white">
@@ -42,6 +58,7 @@ function Header({templateType,handleTemplateTypeChange,handleSave}) {
         </div>
       </header>
     </div>
-  )
+  );
 }
+
 export default Header;

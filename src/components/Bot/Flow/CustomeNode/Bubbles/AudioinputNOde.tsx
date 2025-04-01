@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Handle, Position } from '@xyflow/react';
-import { useState } from 'react';
-
-const AudioInputNode = ({ data }) => {
-  const [audioFile, setAudioFile] = useState(null);
+import { ChangeEvent, useState } from 'react';
+// you have to set the value of the data 
+const AudioInputNode = ({ data }: { data?: { onChange?: (file: File) => void } }) => {
+  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioUrl, setAudioUrl] = useState('');
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
       setAudioFile(file);
       const url = URL.createObjectURL(file);
       setAudioUrl(url);

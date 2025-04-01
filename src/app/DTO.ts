@@ -122,19 +122,22 @@ export interface BotTemplateTableProps {
 }
 export interface BotStore {
   // State
-  botTemplates:[];
-  selectedTemplate: Template | null ,
+  botTemplates: Template[];  // Changed from [] to Template[]
+  selectedTemplate: Template | null;
   bots: Bot[];
   selectedBot: Bot | null;
   selectedFlow: Flow | null;
   isModalOpen: boolean;
-  isTemplateModalOpen:boolean; 
-  newTemplateName:string;
+  isTemplateModalOpen: boolean; 
+  newTemplateName: string;
   newBotName: string;
   isLoading: boolean;
   error: string | null;
+  botId: string | null;  // Added to match previous implementation
+  flowId: string | null;  // Added to match previous implementation
+
   // Bot Actions
-  setNewTemplateName: (name: string)=>void;
+  setNewTemplateName: (name: string) => void;
   setNewBotName: (name: string) => void;
   openModal: () => void;
   closeModal: () => void;

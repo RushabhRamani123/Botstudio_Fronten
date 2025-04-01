@@ -1,47 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react';
+import React from "react";
 import { Button } from "../../../ui/button";
 import { Input } from "../../../ui/input";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "../../../ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "../../../ui/card";
 import { useForm } from "react-hook-form";
 import Google from "../../../../../public/google.svg";
-import { toast } from "../../../../hooks/use-toast";
 import { Toaster } from "../../../ui/toaster";
 
-interface LoginFormProps {
-  onSubmit: (data: { email: string; password: string }) => Promise<boolean>;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
+const LoginForm: React.FC = () => {
   const {
     register,
-    handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const handleFormSubmit = async (data: { email: string; password: string }) => {
-    try {
-      const success = await onSubmit(data);
-      if (!success) {
-        toast({
-          title: "Login Failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Login Error",
-        description: "An error occurred. Please try again later.",
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div className="w-full lg:w-1/2">
@@ -54,7 +24,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             </p>
           </CardHeader>
           <CardContent>
-            <form className="space-y-6" onSubmit={handleSubmit(handleFormSubmit)}>
+            <form className="space-y-6">
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -143,7 +113,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
               variant="outline"
               className="w-full flex items-center justify-center space-x-3 py-2 text-lg hover:bg-gray-100 transition-colors duration-300"
             >
-              <img src={Google} alt="Google logo" className="w-[40px] h-[24px]" />
+              <img
+                src={Google}
+                alt="Google logo"
+                className="w-[40px] h-[24px]"
+              />
               Sign in with Google
             </Button>
             <p className="text-center text-sm text-gray-600">

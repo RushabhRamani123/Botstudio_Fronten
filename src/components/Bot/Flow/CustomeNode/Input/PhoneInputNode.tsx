@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2, Phone } from 'lucide-react';
 import {
@@ -6,13 +6,24 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
+} from '../../../../ui/dialog';
 
-const PhoneInputNode = ({ data, onVariableChange }) => {
+interface PhoneInputNodeProps {
+  onVariableChange?: (variable: string, value: string) => void;
+}
+
+interface PhoneInputSettings {
+  placeholder: string;
+  buttonLabel: string;
+  defaultCountry: string;
+  retryMessage: string;
+  variable: string;
+}
+
+const PhoneInputNode: React.FC<PhoneInputNodeProps> = ({ onVariableChange }) => {
   const [open, setOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<PhoneInputSettings>({
     placeholder: 'Type your phone number...',
     buttonLabel: 'Send',
     defaultCountry: 'International',
@@ -20,7 +31,7 @@ const PhoneInputNode = ({ data, onVariableChange }) => {
     variable: ''
   });
 
-  const handlePhoneChange = (value) => {
+  const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
     if (settings.variable && value) {
       onVariableChange?.(settings.variable, value);

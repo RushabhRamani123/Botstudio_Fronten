@@ -1,7 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 import {AgentCard} from './AgentCard';
 import { Badge } from "../ui/badge";
-
 export function AgentColumn({ title, agents, droppableId }) {
   return (
     <div className="flex flex-col gap-2">

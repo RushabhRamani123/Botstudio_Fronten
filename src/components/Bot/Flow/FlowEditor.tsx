@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo, useState, DragEvent, useRef, useEffect } from "react";
 import {
   ReactFlow,
   Background,
@@ -11,10 +12,11 @@ import {
   Connection,
   ReactFlowInstance,
   NodeChange,
-  EdgeChange
+  EdgeChange,
+  NodeTypes,
+  EdgeTypes
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useMemo, useState, DragEvent, useRef, useEffect } from "react";
 import { MessageCircle, Send, Minimize2, Maximize2 } from 'lucide-react';
 
 // Import custom components
@@ -23,25 +25,19 @@ import StartNode from "./CustomeNode/StartNode";
 import InputTextNode from "./CustomeNode/Bubbles/InputNode";
 import ImageInputNode from "./CustomeNode/Bubbles/ImageinputNode";
 import VideoInputNode from "./CustomeNode/Bubbles/VideoInputNode";
-import EmbedInputNode from "./CustomeNode/Bubbles/EmbedinputNode";
+import URLInputNode from "./CustomeNode/Bubbles/EmbedinputNode";
 import AudioInputNode from "./CustomeNode/Bubbles/AudioinputNOde";
-import InputNode from "./CustomeNode/Input/TextInput";
-import NumberInputNode from "./CustomeNode/Input/NumberInputNode";
+import  InputNode from "./CustomeNode/Input/TextInput";
+import  NumberInputNode from "./CustomeNode/Input/NumberInputNode";
 import EmailInputNode from "./CustomeNode/Input/EmailInputNode";
 import DateInputNode from "./CustomeNode/Input/DateInputNode";
 import PhoneInputNode from "./CustomeNode/Input/PhoneInputNode";
 import PaymentNode from "./CustomeNode/Input/PaymentInputNode";
-import FileInputNode from "./CustomeNode/Input/FileInputNode";
-import RatingInputNode from "./CustomeNode/Input/RatingNode";
-import URLInputNode from "./CustomeNode/Input/WebsiteUrlNode";
+import  FileInputNode from "./CustomeNode/Input/FileInputNode";
+import  RatingInputNode from "./CustomeNode/Input/RatingNode";
 import { useBotStore } from "../../../app/botStore";
 
 // Define interfaces
-interface FlowEditorProps {
-  onSave: boolean;
-  onFlowSave?: (flowData: { nodes: Node[]; edges: Edge[] }) => void;
-}
-
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -50,21 +46,32 @@ interface ChatMessage {
 interface BotFlowCommand {
   type: string;
   position: { x: number; y: number };
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   connections: string[];
 }
 
+interface BotResponse {
+  message: string;
+  flowCommands: BotFlowCommand[] | null;
+}
+
+interface ChatInterfaceProps {
+  messages: ChatMessage[];
+  onSendMessage: (message: string) => void;
+  isLoading: boolean;
+}
+
 // ChatInterface Component
-const ChatInterface = ({ messages, onSendMessage, isLoading }) => {
-  const [inputMessage, setInputMessage] = useState('');
-  const [isMinimized, setIsMinimized] = useState(false);
-  const messagesEndRef = useRef(null);
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, isLoading }) => {
+  const [inputMessage, setInputMessage] = useState<string>('');
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputMessage.trim()) {
       onSendMessage(inputMessage);
@@ -162,13 +169,14 @@ const ChatInterface = ({ messages, onSendMessage, isLoading }) => {
 // Initialize node counter
 let nodeId = 3;
 
-const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
+const FlowEditor: React.FC = () => {
   const { selectedFlow } = useBotStore();
-  const initialNodes = selectedFlow?.Nodes;
+  const initialNodes = selectedFlow?.Nodes || [];
+  const initialEdges = selectedFlow?.edges || [];
 
   // State management
-  const [nodes, setNodes] = useState<Node[]|undefined>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]|undefined>(selectedFlow?.edges);
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -180,6 +188,9 @@ const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
       const botResponse = await simulateBotResponse(message);
       
       setChatMessages(prev => [...prev, {
+        role: 'user',
+        content: message
+      }, {
         role: 'assistant',
         content: botResponse.message
       }]);
@@ -195,7 +206,7 @@ const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
   };
 
   // Simulate bot response (replace with actual API call in production)
-  const simulateBotResponse = async (message: string) => {
+  const simulateBotResponse = async (message: string): Promise<BotResponse> => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     if (message.toLowerCase().includes('greeting')) {
@@ -251,67 +262,66 @@ const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
 
   // Execute bot commands to create nodes and edges
   const executeBotCommands = (commands: BotFlowCommand[]) => {
-    const newNodes: Node[] = [];
-    const newEdges: Edge[] = [];
+    const newNodes: Node[] = commands.map(createNodeFromCommand);
+    const newEdges: Edge[] = commands.flatMap((command, index) => 
+      command.connections.length > 0 
+        ? createEdgesFromCommand(newNodes[index].id, command.connections) 
+        : []
+    );
 
-    commands.forEach((command) => {
-      const node = createNodeFromCommand(command);
-      newNodes.push(node);
-      
-      if (command.connections.length > 0) {
-        const edges = createEdgesFromCommand(node.id, command.connections);
-        newEdges.push(...edges);
-      }
-    });
-
-    setNodes((prevNodes) => [...(prevNodes || []), ...newNodes]);
-    setEdges((prevEdges) => [...(prevEdges || []), ...newEdges]);
+    setNodes(prevNodes => [...prevNodes, ...newNodes]);
+    setEdges(prevEdges => [...prevEdges, ...newEdges]);
   };
 
-  // Register node types
-  const nodeTypes = useMemo(
-    () => ({
-      startnode: StartNode,
-      text: InputTextNode,
-      image: ImageInputNode,
-      video: VideoInputNode,
-      embed: EmbedInputNode,
-      audio: AudioInputNode,
-      textInput: InputNode,
-      number: NumberInputNode,
-      email: EmailInputNode,
-      date: DateInputNode,
-      phone: PhoneInputNode,
-      payment: PaymentNode,
-      file: FileInputNode,
-      rating: RatingInputNode,
-      website: URLInputNode,
-    }),
+  // Register node types with correct type casting
+  const nodeTypes = useMemo<NodeTypes>(() => ({
+    startnode: StartNode as NodeTypes['startnode'],
+    text: InputTextNode as NodeTypes['text'],
+    image: ImageInputNode as NodeTypes['image'],
+    video: VideoInputNode as NodeTypes['video'],
+    embed: URLInputNode as NodeTypes['embed'],
+    audio: AudioInputNode as NodeTypes['audio'],
+    textInput: InputNode as NodeTypes['textInput'],
+    number: NumberInputNode as NodeTypes['number'],
+    email: EmailInputNode as NodeTypes['email'],
+    date: DateInputNode as NodeTypes['date'],
+    phone: PhoneInputNode as NodeTypes['phone'],
+    payment: PaymentNode as NodeTypes['payment'],
+    file: FileInputNode as NodeTypes['file'],
+    rating: RatingInputNode as NodeTypes['rating'],
+    website: URLInputNode as NodeTypes['website'],
+  }), []);
+
+  // Register edge types 
+  const edgeTypes = useMemo<EdgeTypes>(() => ({ 
+    custom: CustomEdge 
+  }), []);
+
+  // Callback for node changes
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds || [])),
     []
   );
 
-  // Register edge types and other callbacks
-  const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    []
-  );
+  // Callback for edge changes
   const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds || [])),
     []
   );
+
+  // Callback for connecting nodes
   const onConnect = useCallback(
     (connection: Connection) => {
-      const targetHasEdge = edges?.some(
+      const targetHasEdge = edges.some(
         (edge) => edge.target === connection.target
       );
-      const sourceHasEdge = edges?.some(
+      const sourceHasEdge = edges.some(
         (edge) => edge.source === connection.source
       );
       if (targetHasEdge || sourceHasEdge) {
         return;
       }
-      setEdges((eds) => addEdge({ ...connection, type: "custom" }, eds));
+      setEdges((eds) => addEdge({ ...connection, type: "custom" }, eds || []));
     },
     [edges]
   );
@@ -367,7 +377,7 @@ const FlowEditor = ({ onSave, onFlowSave }: FlowEditorProps) => {
           };
       }
 
-      setNodes((nds) => nds?.concat(newNode));
+      setNodes((nds) => [...(nds || []), newNode]);
     },
     [reactFlowInstance]
   );

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2 } from 'lucide-react';
 import {
@@ -9,10 +9,26 @@ import {
 } from '../../../../ui/dialog';
 import { Switch } from '../../../../ui/switch';
 
-const InputNode = ({ data, onVariableChange }) => {
-  const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [settings, setSettings] = useState({
+// Define the settings type
+interface NodeSettings {
+  questionText: string;
+  placeholder: string;
+  buttonLabel: string;
+  longText: boolean;
+  allowAudio: boolean;
+  allowAttachments: boolean;
+  variable: string;
+}
+
+// Define the props type
+interface InputNodeProps {
+  onVariableChange?: (key: string, value: string) => void;
+}
+
+const InputNode: React.FC<InputNodeProps> = ({ onVariableChange }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [settings, setSettings] = useState<NodeSettings>({
     questionText: 'What is your name?',
     placeholder: 'Type your answer...',
     buttonLabel: 'Send',
@@ -22,14 +38,14 @@ const InputNode = ({ data, onVariableChange }) => {
     variable: 'Hello'
   });
 
-  const handleSettingChange = (key, value) => {
+  const handleSettingChange = <K extends keyof NodeSettings>(key: K, value: NodeSettings[K]) => {
     setSettings(prev => ({
       ...prev,
       [key]: value
     }));
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value;
     setInputValue(value);
     if (settings.variable) {

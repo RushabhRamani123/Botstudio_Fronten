@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SteppedProgressBar from './Progress';
 import Timeline from './Timeline'; 
 import PasswordForm from './pages/Password'; 
@@ -15,7 +15,9 @@ const SignupFlow: React.FC = () => {
     setUserData(prev => ({ ...prev, name, email }));
     setCurrentStep(1);
   };
-
+useEffect(()=>{
+  console.log(userData)
+},[])
   const handlePasswordComplete = (password: string) => {
     setUserData(prev => ({ ...prev, password }));
     setCurrentStep(2);

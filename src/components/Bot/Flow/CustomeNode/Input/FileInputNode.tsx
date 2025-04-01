@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2, File, Upload } from 'lucide-react';
 import {
@@ -6,12 +6,26 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '../../../../ui/dialog';
 
-const FileInputNode = ({ data, onVariableChange }) => {
+// Define interfaces for props and settings
+interface FileInputNodeProps {
+  onVariableChange?: (variable: string, file: File) => void;
+}
+
+interface FileInputSettings {
+  allowedTypes: string;
+  maxSize: number;
+  buttonLabel: string;
+  placeholder: string;
+  variable: string;
+  multiple: boolean;
+}
+
+const FileInputNode: React.FC<FileInputNodeProps> = ({ onVariableChange }) => {
   const [open, setOpen] = useState(false);
-  const [file, setFile] = useState(null);
-  const [settings, setSettings] = useState({
+  const [file, setFile] = useState<File | null>(null);
+  const [settings, setSettings] = useState<FileInputSettings>({
     allowedTypes: '.pdf,.doc,.docx,.txt',
     maxSize: 5, // MB
     buttonLabel: 'Upload',
@@ -20,17 +34,18 @@ const FileInputNode = ({ data, onVariableChange }) => {
     multiple: false
   });
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files.length > 0) {
-      setFile(files[0]);
+    if (files && files.length > 0) {
+      const selectedFile = files[0];
+      setFile(selectedFile);
       if (settings.variable) {
-        onVariableChange?.(settings.variable, files[0]);
+        onVariableChange?.(settings.variable, selectedFile);
       }
     }
   };
 
-  const formatFileSize = (size) => {
+  const formatFileSize = (size: number) => {
     return `${(size / (1024 * 1024)).toFixed(2)} MB`;
   };
 
@@ -104,7 +119,10 @@ const FileInputNode = ({ data, onVariableChange }) => {
               <input
                 type="number"
                 value={settings.maxSize}
-                onChange={(e) => setSettings(prev => ({...prev, maxSize: e.target.value}))}
+                onChange={(e) => setSettings(prev => ({
+                  ...prev, 
+                  maxSize: Number(e.target.value)
+                }))}
                 className="w-full px-3 py-2 text-sm border rounded-md"
               />
             </div>

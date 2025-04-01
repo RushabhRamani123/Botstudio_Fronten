@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2 } from 'lucide-react';
 import {
@@ -8,18 +8,28 @@ import {
   DialogTitle,
 } from '../../../../ui/dialog';
 
-const URLInputNode = ({ data, onVariableChange }) => {
-  const [open, setOpen] = useState(false);
-  const [url, setUrl] = useState('');
-  const [isValid, setIsValid] = useState(true);
-  const [settings, setSettings] = useState({
+// Define interface for component props
+interface URLInputNodeProps {
+  onVariableChange?: (variable: string, value: string) => void;
+}
+interface NodeSettings {
+  placeholder: string;
+  buttonLabel: string;
+  retryMessage: string;
+  variable: string;
+}
+const URLInputNode: React.FC<URLInputNodeProps> = ({ onVariableChange }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [url, setUrl] = useState<string>('');
+  const [isValid, setIsValid] = useState<boolean>(true);
+  const [settings, setSettings] = useState<NodeSettings>({
     placeholder: 'Type a URL...',
     buttonLabel: 'Send',
     retryMessage: "This URL doesn't seem to be valid",
     variable: ''
   });
 
-  const validateURL = (url) => {
+  const validateURL = (url: string): boolean => {
     try {
       new URL(url);
       return true;
@@ -28,7 +38,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
     }
   };
 
-  const handleURLChange = (value) => {
+  const handleURLChange = (value: string) => {
     setUrl(value);
     setIsValid(value === '' || validateURL(value));
     if (settings.variable && validateURL(value)) {

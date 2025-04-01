@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2, Globe } from 'lucide-react';
 import {
@@ -6,9 +6,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '../../../../ui/dialog';
 
-const URLInputNode = ({ data, onVariableChange }) => {
+// Define the props interface
+interface URLInputNodeProps {
+  onVariableChange?: (variable: string, value: string) => void;
+}
+
+const URLInputNode: React.FC<URLInputNodeProps> = ({ onVariableChange }) => {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [isValid, setIsValid] = useState(true);
@@ -19,7 +24,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
     variable: ''
   });
 
-  const validateURL = (url) => {
+  const validateURL = (url: string) => {
     if (!url) return true;
     try {
       const urlObj = new URL(url);
@@ -29,13 +34,20 @@ const URLInputNode = ({ data, onVariableChange }) => {
     }
   };
 
-  const handleURLChange = (value) => {
+  const handleURLChange = (value: string) => {
     setUrl(value);
     const valid = validateURL(value);
     setIsValid(valid);
     if (valid && settings.variable) {
       onVariableChange?.(settings.variable, value);
     }
+  };
+
+  const handleSettingsChange = <K extends keyof typeof settings>(
+    key: K, 
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    setSettings(prev => ({...prev, [key]: e.target.value}));
   };
 
   return (
@@ -99,7 +111,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
               <input
                 type="text"
                 value={settings.placeholder}
-                onChange={(e) => setSettings(prev => ({...prev, placeholder: e.target.value}))}
+                onChange={(e) => handleSettingsChange('placeholder', e)}
                 className="w-full px-3 py-2 text-sm border rounded-md"
               />
             </div>
@@ -109,7 +121,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
               <input
                 type="text"
                 value={settings.buttonLabel}
-                onChange={(e) => setSettings(prev => ({...prev, buttonLabel: e.target.value}))}
+                onChange={(e) => handleSettingsChange('buttonLabel', e)}
                 className="w-full px-3 py-2 text-sm border rounded-md"
               />
             </div>
@@ -119,7 +131,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
               <input
                 type="text"
                 value={settings.retryMessage}
-                onChange={(e) => setSettings(prev => ({...prev, retryMessage: e.target.value}))}
+                onChange={(e) => handleSettingsChange('retryMessage', e)}
                 className="w-full px-3 py-2 text-sm border rounded-md"
               />
             </div>
@@ -129,7 +141,7 @@ const URLInputNode = ({ data, onVariableChange }) => {
               <input
                 type="text"
                 value={settings.variable}
-                onChange={(e) => setSettings(prev => ({...prev, variable: e.target.value}))}
+                onChange={(e) => handleSettingsChange('variable', e)}
                 className="w-full px-3 py-2 text-sm border rounded-md"
                 placeholder="Select a variable"
               />

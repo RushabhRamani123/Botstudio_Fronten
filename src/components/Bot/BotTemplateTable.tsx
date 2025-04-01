@@ -12,6 +12,12 @@ export const BotTemplateTable = ({
   templates,
   onTemplateClick,
 }: BotTemplateTableProps) => {
+  // Helper function to safely format date
+  const formatDate = (date: Date | string | undefined): string => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString();
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -30,10 +36,10 @@ export const BotTemplateTable = ({
           >
             <TableCell className="font-medium">{template.name}</TableCell>
             <TableCell>
-              {new Date(template.createdAt).toLocaleDateString()}
+              {formatDate(template.createdAt)}
             </TableCell>
             <TableCell>
-              {new Date(template?.modifiedAt).toLocaleDateString()}
+              {formatDate(template.modifiedAt)}
             </TableCell>
           </TableRow>
         ))}

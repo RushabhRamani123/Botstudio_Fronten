@@ -5,7 +5,6 @@ export function Header() {
           <h1 className="text-xl font-semibold">Dashboard</h1>
         </div>
         <div className="ml-auto flex items-center gap-4">
-          {/* Add any header actions or buttons here */}
         </div>
       </header>
     );

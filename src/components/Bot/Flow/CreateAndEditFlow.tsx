@@ -5,8 +5,6 @@ import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
 import { Skeleton } from "../../ui/skeleton";
 import type { Node, Edge } from '@xyflow/react';
-import { toast } from '../../../hooks/use-toast';
-import useStore from '../../../app/chatStore';
 import { useBotStore } from '../../../app/botStore';
 
 // Lazy loaded components
@@ -77,7 +75,7 @@ const CreateAndEditFlow: React.FC = () => {
     }
   };
   const handleFlowSave = async (flowData: FlowData) => {
-    updateFlowNodes(selectedBot.id,selectedFlow.id,flowData.nodes,flowData.edges); 
+    updateFlowNodes(selectedBot?.id,selectedFlow?.id,flowData?.nodes,flowData.edges); 
   };
 
   const handleNavigateBack = () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2, Calendar } from 'lucide-react';
 import {
@@ -6,13 +6,29 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
+} from '../../../../ui/dialog';
+import { Switch } from '../../../../ui/switch';
 
-const DateInputNode = ({ data, onVariableChange }) => {
+// Define an interface for the node props
+interface DateInputNodeProps {
+  onVariableChange?: (variable: string, value: string) => void;
+}
+
+// Define an interface for the settings state
+interface DateInputSettings {
+  isRange: boolean;
+  withTime: boolean;
+  buttonLabel: string;
+  min: string;
+  max: string;
+  format: string;
+  variable: string;
+}
+
+const DateInputNode: React.FC<DateInputNodeProps> = ({ onVariableChange }) => {
   const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [settings, setSettings] = useState({
+  const [selectedDate, setSelectedDate] = useState<string | string[]>('');
+  const [settings, setSettings] = useState<DateInputSettings>({
     isRange: false,
     withTime: false,
     buttonLabel: 'Send',
@@ -22,25 +38,29 @@ const DateInputNode = ({ data, onVariableChange }) => {
     variable: ''
   });
 
-  const formatDate = (date) => {
+  const formatDate = (date: string) => {
     if (!date) return '';
     const d = new Date(date);
-    const format = settings.format.replace('dd', String(d.getDate()).padStart(2, '0'))
+    return settings.format
+      .replace('dd', String(d.getDate()).padStart(2, '0'))
       .replace('MM', String(d.getMonth() + 1).padStart(2, '0'))
-      .replace('yyyy', d.getFullYear());
-    return format;
+      .replace('yyyy', d.getFullYear().toString());
   };
 
-  const handleDateChange = (value) => {
+  const handleDateChange = (value: string | string[]) => {
     setSelectedDate(value);
-    if (settings.variable && value) {
-      onVariableChange?.(settings.variable, formatDate(value));
+    if (settings.variable) {
+      // Ensure we pass a string to onVariableChange
+      const formattedValue = Array.isArray(value) 
+        ? value.map(v => formatDate(v)).join(' - ') 
+        : formatDate(value);
+      
+      onVariableChange?.(settings.variable, formattedValue);
     }
   };
 
   const getInputType = () => {
-    if (settings.withTime) return 'datetime-local';
-    return 'date';
+    return settings.withTime ? 'datetime-local' : 'date';
   };
 
   return (
@@ -66,14 +86,22 @@ const DateInputNode = ({ data, onVariableChange }) => {
                 className="w-full px-3 py-2 text-sm border rounded-md"
                 min={settings.min}
                 max={settings.max}
-                onChange={(e) => handleDateChange([selectedDate[0], e.target.value])}
+                onChange={(e) => handleDateChange(
+                  Array.isArray(selectedDate) 
+                    ? [e.target.value, selectedDate[1] || ''] 
+                    : e.target.value
+                )}
               />
               <input
                 type={getInputType()}
                 className="w-full px-3 py-2 text-sm border rounded-md"
                 min={settings.min}
                 max={settings.max}
-                onChange={(e) => handleDateChange([selectedDate[0], e.target.value])}
+                onChange={(e) => handleDateChange(
+                  Array.isArray(selectedDate) 
+                    ? [selectedDate[0] || '', e.target.value] 
+                    : e.target.value
+                )}
               />
             </div>
           ) : (

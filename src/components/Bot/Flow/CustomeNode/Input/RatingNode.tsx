@@ -6,14 +6,29 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from '@/components/ui/switch';
+} from '../../../../ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../ui/select";
+import { Switch } from '../../../../ui/switch';
 
-const RatingInputNode = ({ data, onVariableChange }) => {
+interface RatingInputNodeProps {
+  onVariableChange?: (variable: string, value: number) => void;
+}
+
+interface RatingSettings {
+  maximum: number;
+  type: string;
+  startsAt: number;
+  label0: string;
+  label10: string;
+  buttonLabel: string;
+  variable: string;
+  oneClickSubmit: boolean;
+}
+
+const RatingInputNode: React.FC<RatingInputNodeProps> = ({ onVariableChange }) => {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<RatingSettings>({
     maximum: 10,
     type: 'Numbers',
     startsAt: 0,
@@ -24,7 +39,7 @@ const RatingInputNode = ({ data, onVariableChange }) => {
     oneClickSubmit: false
   });
 
-  const handleRatingChange = (value) => {
+  const handleRatingChange = (value: number) => {
     setRating(value);
     if (settings.oneClickSubmit && settings.variable) {
       onVariableChange?.(settings.variable, value);
@@ -88,7 +103,7 @@ const RatingInputNode = ({ data, onVariableChange }) => {
               <label className="text-sm font-medium">Maximum:</label>
               <Select
                 value={String(settings.maximum)}
-                onValueChange={(value) => setSettings(prev => ({...prev, maximum: parseInt(value)}))}
+                onValueChange={(value: string) => setSettings(prev => ({...prev, maximum: parseInt(value)}))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -104,7 +119,7 @@ const RatingInputNode = ({ data, onVariableChange }) => {
               <label className="text-sm font-medium">Type:</label>
               <Select
                 value={settings.type}
-                onValueChange={(value) => setSettings(prev => ({...prev, type: value}))}
+                onValueChange={(value: string) => setSettings(prev => ({...prev, type: value}))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -171,7 +186,7 @@ const RatingInputNode = ({ data, onVariableChange }) => {
               <label className="text-sm font-medium">One click submit:</label>
               <Switch
                 checked={settings.oneClickSubmit}
-                onCheckedChange={(checked) => setSettings(prev => ({...prev, oneClickSubmit: checked}))}
+                onCheckedChange={(checked: boolean) => setSettings(prev => ({...prev, oneClickSubmit: checked}))}
               />
             </div>
           </div>

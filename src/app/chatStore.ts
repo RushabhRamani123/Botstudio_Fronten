@@ -1,27 +1,26 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { ChatFilter, ChatStore } from './DTO';
-import { initialMessages,initialChats } from '../data';
+import { initialMessages, initialChats } from '../data';
+
 const useStore = create<ChatStore>()(
   persist(
     (set, get) => ({
-      messages: initialMessages,
       chats: initialChats,
+      messages: initialMessages,
       selectedChatId: null,
-      setSelectedChatId:(ChatId:string)=>{
-      const chat = get().chats.find(chat => chat.id === ChatId);
-      if (!chat) {
-        console.warn(`Chat with id ${ChatId} does not exist`);
-        return;
-      }
-        set({selectedChatId:ChatId});
+      selectedMessageId: null,
+      setSelectedChat: (chatId: string) => {
+        const chat = get().chats.find(chat => chat.id === chatId);
+        if (!chat) {
+          console.warn(`Chat with id ${chatId} does not exist`);
+          return;
+        }
+        set({ selectedChatId: chatId });
       },
-      addMessage: (message) => set((state) => {
-        const newMessages = [...state.messages, message];        
-        return {
-          messages: newMessages,
-        };
-      }),
+      addMessage: (message) => set((state) => ({
+        messages: [...state.messages, message]
+      })),
       getFilteredChats: (filter?: ChatFilter) => {
         const state = get();
         const now = new Date();
@@ -76,7 +75,37 @@ const useStore = create<ChatStore>()(
             return state.chats;
         }
       },
+      getSelectedChatMessages: () => {
+        const state = get();
+        return state.selectedChatId 
+          ? state.messages.filter(msg => msg.chatId === state.selectedChatId)
+          : [];
+      },
+      clearSelectedChat: () => set({ 
+        selectedChatId: null,
+        selectedMessageId: null 
+      }),
+      updateMessageStatus: (messageId, status) => set((state) => ({
+        messages: state.messages.map(msg => 
+          msg.id === messageId ? { ...msg, status } : msg
+        )
+      })),
+      markChatAsRead: (chatId) => set((state) => ({
+        chats: state.chats.map(chat => 
+          chat.id === chatId ? { ...chat, unreadCount: 0 } : chat
+        )
+      }))
     }),
+    {
+      name: "chat-storage", // unique name for localStorage key
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        chats: state.chats,
+        messages: state.messages,
+        selectedChatId: state.selectedChatId
+      })
+    }
   )
 );
+
 export default useStore;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2, CreditCard } from 'lucide-react';
 import {
@@ -6,12 +6,23 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+} from '../../../../ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../ui/select";
 
-const PaymentNode = ({ data, onVariableChange }) => {
+
+
+interface PaymentSettings {
+  provider: string;
+  account: string;
+  priceAmount: string;
+  currency: string;
+  buttonLabel: string;
+  successMessage: string;
+}
+
+const PaymentNode: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<PaymentSettings>({
     provider: 'Stripe',
     account: '',
     priceAmount: '30.00',
@@ -61,7 +72,7 @@ const PaymentNode = ({ data, onVariableChange }) => {
               <label className="text-sm font-medium">Provider:</label>
               <Select
                 value={settings.provider}
-                onValueChange={(value) => setSettings(prev => ({...prev, provider: value}))}
+                onValueChange={(value: string) => setSettings(prev => ({...prev, provider: value}))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select provider" />
@@ -98,7 +109,7 @@ const PaymentNode = ({ data, onVariableChange }) => {
                 <label className="text-sm font-medium">Currency:</label>
                 <Select
                   value={settings.currency}
-                  onValueChange={(value) => setSettings(prev => ({...prev, currency: value}))}
+                  onValueChange={(value: string) => setSettings(prev => ({...prev, currency: value}))}
                 >
                   <SelectTrigger>
                     <SelectValue />

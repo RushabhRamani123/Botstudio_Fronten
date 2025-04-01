@@ -6,7 +6,6 @@ function Signup(): JSX.Element {
       <div className="w-full lg:w-1/2">
         <SignupForm />
       </div>
-      {/* other part of the form */}
       <div className="hidden md:block relative w-full md:w-1/2 bg-custom-woman bg-cover bg-center h-min-screen">
         <TestimonialCarousel />
       </div>

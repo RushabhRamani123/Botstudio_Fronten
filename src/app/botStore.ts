@@ -21,16 +21,15 @@ export const useBotStore = create<BotStore>()(
       error: null,
       botId: null,
       flowId: null,
-      // Bot Actions
       setNewBotName: (name) => set({ newBotName: name }),
       setNewTemplateName: (name) => set({ newTemplateName: name }),
       openModal: () => set({ isModalOpen: true }),
       openTemplateModal: () => set({ isTemplateModalOpen: true }),
       closeModal: () => set({ isModalOpen: false, newBotName: "" }),
       closeTemplateModal: () =>
-        set({ isTemplateModalOpen: false, newTemplateName: "" }),
+      set({ isTemplateModalOpen: false, newTemplateName: "" }),
       addBot: (name, description = "") =>
-        set((state) => {
+      set((state) => {
           const newBot: Bot = {
             id: generateId(),
             name,
@@ -238,7 +237,6 @@ export const useBotStore = create<BotStore>()(
                 : state.selectedFlow,
           };
         }),
-
       // Error Handling
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),

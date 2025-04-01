@@ -1,11 +1,17 @@
 import { Handle, Position } from '@xyflow/react';
-import { useState } from 'react';
-
-const VideoInputNode = ({ data }) => {
+import { useState, ChangeEvent } from 'react';
+interface VideoInputNodeProps {
+  data?: {
+    videoUrl?: string;
+    onChange?: (url: string) => void;
+  };
+}
+const VideoInputNode: React.FC<VideoInputNodeProps> = ({ data }) => {
   const [videoUrl, setVideoUrl] = useState(data?.videoUrl || '');
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    const file = files?.[0];
+    
     if (file) {
       const url = URL.createObjectURL(file);
       setVideoUrl(url);
@@ -58,5 +64,4 @@ const VideoInputNode = ({ data }) => {
     </div>
   );
 };
-
 export default VideoInputNode;

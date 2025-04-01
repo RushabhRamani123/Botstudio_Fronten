@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { Button } from '../ui/button';
 import OtpInput from './Otp'; // Assuming you have this component
 interface FormInputs {
   email: string;
@@ -18,11 +18,6 @@ const EmailCheckComponent: React.FC = () => {
   const handleEnterCodeManually = ():void => {
     setShowOtpInput(true);
   };
-
-  const handleOtpComplete = (otp: string): void => {
-    console.log('OTP entered:', otp);
-  };
-
   return (
     <div className="flex justify-center items-start min-h-screen pt-16">
       <Card className="border-none w-full max-w-md">
@@ -54,7 +49,7 @@ const EmailCheckComponent: React.FC = () => {
               <p className="text-sm text-center text-gray-600">
                 Enter the 6-digit code sent to your email
               </p>
-              <OtpInput length={6} onComplete={handleOtpComplete} />
+              <OtpInput length={6} />
             </div>
           )}
           <p className="text-sm text-center mt-4 text-gray-600">

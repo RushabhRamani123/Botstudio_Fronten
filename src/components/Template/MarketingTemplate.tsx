@@ -1,40 +1,64 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { PlusCircle, X } from "lucide-react";
 
-export const RenderMarketingFields = ({ handleChange, template }) => {
-  const [showVariableModal, setShowVariableModal] = useState(false);
-  const [selectedField, setSelectedField] = useState("");
-  const [variables, setVariables] = useState([
+// Define interfaces for type safety
+interface Variable {
+  name: string;
+  description: string;
+}
+
+interface MarketingTemplate {
+  targetAudience: string;
+  campaignGoals: string;
+  keyMessages: string;
+  callToAction: string;
+  content: string;
+}
+
+interface RenderMarketingFieldsProps {
+  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  template: MarketingTemplate;
+}
+
+export const RenderMarketingFields: React.FC<RenderMarketingFieldsProps> = ({ handleChange, template }) => {
+  const [showVariableModal, setShowVariableModal] = useState<boolean>(false);
+  const [selectedField, setSelectedField] = useState<string>("");
+  const [variables, setVariables] = useState<Variable[]>([
     { name: "customerName", description: "Customer's full name" },
     { name: "companyName", description: "Company name" },
     { name: "productName", description: "Product name" },
     { name: "date", description: "Current date" },
   ]);
-  const [newVariable, setNewVariable] = useState({ name: "", description: "" });
-  const insertVariable = (field, variableName) => {
-    const cursorPosition = document.querySelector(
-      `[name="${field}"]`
-    ).selectionStart;
-    const currentValue = template[field];
-    const newValue =
-      currentValue.slice(0, cursorPosition) +
-      `{{${variableName}}}` +
-      currentValue.slice(cursorPosition);
+  const [newVariable, setNewVariable] = useState<Variable>({ name: "", description: "" });
 
-    handleChange({
-      target: {
-        name: field,
-        value: newValue,
-      },
-    });
+  const insertVariable = (field: string, variableName: string) => {
+    const inputElement = document.querySelector(`[name="${field}"]`) as HTMLInputElement | HTMLTextAreaElement | null;
+    
+    if (inputElement) {
+      const cursorPosition = inputElement.selectionStart || 0;
+      const currentValue = template[field as keyof MarketingTemplate];
+      const newValue =
+        currentValue.slice(0, cursorPosition) +
+        `{{${variableName}}}` +
+        currentValue.slice(cursorPosition);
+
+      handleChange({
+        target: {
+          name: field,
+          value: newValue,
+        },
+      } as ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
+    }
   };
+
   const addNewVariable = () => {
     if (newVariable.name && newVariable.description) {
       setVariables([...variables, newVariable]);
       setNewVariable({ name: "", description: "" });
     }
   };
-  const VariableSelector = ({ field }) => (
+
+  const VariableSelector: React.FC<{ field: string }> = ({ field }) => (
     <div className="relative">
       <button
         type="button"
@@ -48,6 +72,7 @@ export const RenderMarketingFields = ({ handleChange, template }) => {
       </button>
     </div>
   );
+
   const VariableModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
@@ -111,6 +136,7 @@ export const RenderMarketingFields = ({ handleChange, template }) => {
       </div>
     </div>
   );
+
   return (
     <>
       <div>

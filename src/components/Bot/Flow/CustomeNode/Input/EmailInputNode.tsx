@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Settings2 } from 'lucide-react';
 import {
@@ -6,9 +6,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '../../../../ui/dialog';
 
-const EmailInputNode = ({ data, onVariableChange }) => {
+interface EmailInputNodeProps {
+  onVariableChange?: (variable: string, value: string) => void;
+}
+const EmailInputNode: React.FC<EmailInputNodeProps> = ({ onVariableChange }) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [isValid, setIsValid] = useState(true);
@@ -19,11 +22,11 @@ const EmailInputNode = ({ data, onVariableChange }) => {
     variable: ''
   });
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleEmailChange = (value) => {
+  const handleEmailChange = (value: string) => {
     setEmail(value);
     setIsValid(value === '' || validateEmail(value));
     if (settings.variable && validateEmail(value)) {

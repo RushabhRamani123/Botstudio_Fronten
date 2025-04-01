@@ -20,16 +20,25 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 
+// Define types
+type TemplateCategory = 'Email' | 'Documentation' | 'Business';
+
+interface Template {
+  id: number;
+  title: string;
+  category: TemplateCategory;
+  lastModified: string;
+}
+
 // Reusable Tag Component
-const Tag = ({ category }) => {
-  const colorMap = {
+const Tag: React.FC<{ category: TemplateCategory }> = ({ category }) => {
+  const colorMap: Record<TemplateCategory, string> = {
     Email: 'bg-blue-100 text-blue-800',
     Documentation: 'bg-green-100 text-green-800',
     Business: 'bg-purple-100 text-purple-800',
-    // Add more categories and colors as needed
   };
 
-  const colorClass = colorMap[category] || 'bg-gray-100 text-gray-800'; // Default color for unknown categories
+  const colorClass = colorMap[category];
 
   return (
     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
@@ -39,7 +48,7 @@ const Tag = ({ category }) => {
 };
 
 function TemplateManagement() {
-  const [templates, setTemplates] = useState([
+  const [templates, setTemplates] = useState<Template[]>([
     { id: 1, title: 'Welcome Email', category: 'Email', lastModified: '2024-01-05' },
     { id: 2, title: 'Meeting Minutes', category: 'Documentation', lastModified: '2024-01-04' },
     { id: 3, title: 'Project Proposal', category: 'Business', lastModified: '2024-01-03' }
@@ -49,30 +58,33 @@ function TemplateManagement() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [editTitle, setEditTitle] = useState('');
 
   const handleCreate = () => {
     navigate('/template/builder');
   };
 
-  const handleDelete = (e, template) => {
+  const handleDelete = (e: React.MouseEvent, template: Template) => {
     e.stopPropagation();
     setSelectedTemplate(template);
     setShowDeleteDialog(true);
   };
 
   const confirmDelete = () => {
-    setTemplates(templates.filter(template => template.id !== selectedTemplate.id));
-    setShowDeleteDialog(false);
-    setSelectedTemplate(null);
+    if (selectedTemplate) {
+      setTemplates(templates.filter(template => template.id !== selectedTemplate.id));
+      setShowDeleteDialog(false);
+      setSelectedTemplate(null);
+    }
   };
 
-  const handleRowClick = (id) => {
+  const handleRowClick = (templateId: number) => {
+    console.log(templateId); 
     navigate('/template/builder');
   };
 
-  const handleEdit = (e, template) => {
+  const handleEdit = (e: React.MouseEvent, template: Template) => {
     e.stopPropagation();
     setSelectedTemplate(template);
     setEditTitle(template.title);
@@ -80,18 +92,20 @@ function TemplateManagement() {
   };
 
   const handleSaveEdit = () => {
-    setTemplates(templates.map(template => 
-      template.id === selectedTemplate.id 
-        ? { 
-            ...template, 
-            title: editTitle,
-            lastModified: new Date().toISOString().split('T')[0]
-          } 
-        : template
-    ));
-    setShowEditModal(false);
-    setSelectedTemplate(null);
-    setEditTitle('');
+    if (selectedTemplate) {
+      setTemplates(templates.map(template => 
+        template.id === selectedTemplate.id 
+          ? { 
+              ...template, 
+              title: editTitle,
+              lastModified: new Date().toISOString().split('T')[0]
+            } 
+          : template
+      ));
+      setShowEditModal(false);
+      setSelectedTemplate(null);
+      setEditTitle('');
+    }
   };
 
   const filteredTemplates = templates.filter(template =>

@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
 import { PlusCircle, X } from 'lucide-react';
-
-export const RenderEmailFields = ({ handleChange, template }) => {
+interface Template {
+  subject: string;
+  content: string;
+  [key: string]: string;
+}
+interface Variable {
+  name: string;
+  description: string;
+}
+interface RenderEmailFieldsProps {
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  template: Template;
+}
+export const RenderEmailFields: React.FC<RenderEmailFieldsProps> = ({ handleChange, template }) => {
   const [showVariableModal, setShowVariableModal] = useState(false);
   const [selectedField, setSelectedField] = useState('');
-  const [variables, setVariables] = useState([
+  const [variables, setVariables] = useState<Variable[]>([
     { name: 'recipientName', description: 'Recipient\'s full name' },
     { name: 'recipientEmail', description: 'Recipient\'s email address' },
     { name: 'companyName', description: 'Company name' },
@@ -12,10 +24,11 @@ export const RenderEmailFields = ({ handleChange, template }) => {
     { name: 'senderName', description: 'Sender\'s name' },
     { name: 'senderTitle', description: 'Sender\'s job title' }
   ]);
-  const [newVariable, setNewVariable] = useState({ name: '', description: '' });
+  const [newVariable, setNewVariable] = useState<Variable>({ name: '', description: '' });
 
-  const insertVariable = (field, variableName) => {
-    const cursorPosition = document.querySelector(`[name="${field}"]`).selectionStart;
+  const insertVariable = (field: string, variableName: string) => {
+    const inputElement = document.querySelector(`[name="${field}"]`) as HTMLInputElement | HTMLTextAreaElement;
+    const cursorPosition = inputElement.selectionStart || 0;
     const currentValue = template[field];
     const newValue = 
       currentValue.slice(0, cursorPosition) + 
@@ -27,7 +40,7 @@ export const RenderEmailFields = ({ handleChange, template }) => {
         name: field,
         value: newValue
       }
-    });
+    } as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
   };
 
   const addNewVariable = () => {
@@ -37,7 +50,7 @@ export const RenderEmailFields = ({ handleChange, template }) => {
     }
   };
 
-  const VariableSelector = ({ field }) => (
+  const VariableSelector: React.FC<{ field: string }> = ({ field }) => (
     <div className="relative">
       <button
         type="button"
@@ -72,14 +85,18 @@ export const RenderEmailFields = ({ handleChange, template }) => {
               type="text"
               placeholder="Variable name"
               value={newVariable.name}
-              onChange={(e) => setNewVariable({ ...newVariable, name: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                setNewVariable({ ...newVariable, name: e.target.value })
+              }
               className="w-full p-2 border rounded-md text-sm"
             />
             <input
               type="text"
               placeholder="Variable description"
               value={newVariable.description}
-              onChange={(e) => setNewVariable({ ...newVariable, description: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                setNewVariable({ ...newVariable, description: e.target.value })
+              }
               className="w-full p-2 border rounded-md text-sm"
             />
             <button

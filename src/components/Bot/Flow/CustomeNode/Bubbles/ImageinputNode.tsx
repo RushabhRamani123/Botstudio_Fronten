@@ -1,13 +1,20 @@
 import { Handle, Position } from '@xyflow/react';
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Image, Upload } from 'lucide-react';
-
-const ImageInputNode = ({ data }) => {
+interface ImageInputNodeProps {
+  data?: {
+    imageUrl?: string;
+    onChange?: (url: string) => void;
+  };
+}
+const ImageInputNode: React.FC<ImageInputNodeProps> = ({ data }) => {
   const [imageUrl, setImageUrl] = useState(data?.imageUrl || '');
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    const file = files?.[0];
+    
     if (file) {
       const url = URL.createObjectURL(file);
       setImageUrl(url);
@@ -24,7 +31,6 @@ const ImageInputNode = ({ data }) => {
         position={Position.Left}
         className="w-3 h-3 !bg-purple-400"
       />
-      
       <div className="p-3">
         <div className="flex items-center justify-between mb-2">
           <div className="text-sm font-medium text-gray-700 flex items-center gap-2">

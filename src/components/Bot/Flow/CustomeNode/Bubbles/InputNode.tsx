@@ -1,14 +1,22 @@
 import { Handle, Position } from '@xyflow/react';
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
+interface InputTextNodeProps {
+  data?: {
+    text?: string;
+    onChange?: (value: string) => void;
+  };
+}
 
-const InputTextNode = ({ data }) => {
+const InputTextNode: React.FC<InputTextNodeProps> = ({ data }) => {
   const [text, setText] = useState(data?.text || '');
 
-  const handleChange = (e) => {
-    setText(e.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setText(newValue);
+    
     // If you have a callback for updating node data
     if (data?.onChange) {
-      data.onChange(e.target.value);
+      data.onChange(newValue);
     }
   };
 
